@@ -9,6 +9,8 @@ export const addUserQueue = (socket) => {
     //기존 큐를 비워야할지도 고민해봐야 할듯
     logger.warn(`addUserQueue. already exists queue : ${id}`);
     queueBySocket[id].socket = socket;
+    queueBySocket[id].receiveQueue = queueBySocket[id].receiveQueue || [];
+    queueBySocket[id].sendQueue = queueBySocket[id].sendQueue || [];
   } else {
     queueBySocket[id] = {
       socket,
@@ -21,7 +23,7 @@ export const addUserQueue = (socket) => {
 const getUserQueue = (id) => {
   const userQueues = queueBySocket[id];
   if (!userQueues) {
-    logger.warn(`Unknown user queue. is Empty : ${id}`);
+    logger.error(`Unknown user queue. is Empty : ${id}`);
   }
   return userQueues;
 };
