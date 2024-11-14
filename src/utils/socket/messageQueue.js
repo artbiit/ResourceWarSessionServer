@@ -18,15 +18,34 @@ export const addUserQueue = (socket) => {
   }
 };
 
-console.log();
-
-export const enqueueSend = (id, buffer) => {
+const getUserQueue = (id) => {
   const userQueues = queueBySocket[id];
-  if (userQueues) {
-    userQueues.sendQueue.push(buffer);
-  } else {
-    logger.warn(`enqueueSend. unknown user : ${id}`);
+  if (!userQueues) {
+    logger.warn(`Unknown user queue. is Empty : ${id}`);
   }
+  return userQueues;
 };
 
-export const countSend = (id) => {};
+export const enqueueSend = (id, buffer) => {
+  getUserQueue(id).sendQueue.push(buffer);
+};
+
+export const countSend = (id) => {
+  return getUserQueue(id).sendQueue.length;
+};
+
+export const dequeueSend = (id) => {
+  return getUserQueue(id).sendQueue.shift();
+};
+
+export const enqueueReceive = (id, buffer) => {
+  getUserQueue(id).receiveQueue.push(buffer);
+};
+
+export const countReceive = (id) => {
+  return getUserQueue(id).receiveQueue.length;
+};
+
+export const dequeueReceive = (id) => {
+  return getUserQueue(id).receiveQueue.shift();
+};
