@@ -1,6 +1,8 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
+import configs from '../configs/configs.js';
 
+const { LOGGER_STACK_TRACE } = configs;
 /**
  * 로그 메시지 형식을 정의합니다.
  * 로그 레벨, 타임스탬프, 메시지를 포함하는 문자열을 반환합니다.
@@ -10,8 +12,10 @@ import 'winston-daily-rotate-file';
  * @param {string} param.message - 로그 메시지
  * @returns {string} - 포맷된 로그 메시지
  */
-const logFormat = winston.format.printf(({ timestamp, level, message }) => {
-  return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+const logFormat = winston.format.printf(({ timestamp, level, message, stack }) => {
+  return stack
+    ? `${timestamp} [${level}] ${stack}` // 스택 정보가 있을 경우
+    : `${timestamp} [${level}] ${message}`; // 일반 메시지일 경우
 });
 
 /**
@@ -36,6 +40,7 @@ const logger = winston.createLogger({
   level: 'info', // 로그 레벨 설정
   format: winston.format.combine(
     winston.format.timestamp(), // 타임스탬프 추가
+    winston.format.errors({ stack: LOGGER_STACK_TRACE }), // 스택 트레이스 포함
     logFormat, // 로그 형식 적용
   ),
   transports: [
