@@ -2,7 +2,7 @@
   "name": "ResourceWarServer",
   "version": "1.0.0",
   "main": "src/server.js",
-  "repository": "https://github.com/artbiit/ResourceWarServer",
+  "repository": "https://github.com/artbiit/ResourceWarSessionServer",
   "author": "ljs <artbiit@naver.com>",
   "license": "MIT",
   "dependencies": {
