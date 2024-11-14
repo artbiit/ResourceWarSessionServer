@@ -1,5 +1,5 @@
 {
-  "name": "ResourceWarServer",
+  "name": "ResourceWarSessionServer",
   "version": "1.0.0",
   "main": "src/server.js",
   "repository": "https://github.com/artbiit/ResourceWarSessionServer",
