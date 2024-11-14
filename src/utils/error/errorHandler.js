@@ -25,5 +25,4 @@ export const handleError = (packetType, error) => {
     message = error.message;
     logger.error(`[${getProtoTypeNameByHandlerId(packetType)}/${packetType}]일반 에러: ${error}`);
   }
-  console.error(error, '\n-------------------');
 };
