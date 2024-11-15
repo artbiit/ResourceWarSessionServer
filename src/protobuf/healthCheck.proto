@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package healthCheck;
+
+
+// Ping 응답
+message S2CPingReq {
+    int64 serverTime = 1; // UTC+0 Unix timestamp 서버가 먼저 요청을 보냄, 헬스체크 용도, 해당 클라가 살아 있는 지 확인 하기 위해
+}
+  
+// Pong 응답
+message C2SPongRes {
+    int64 clientTime = 1; // 클라이언트 시간
+}
+
+// 최상위 GamePacket 메시지
+message GamePacket {
+    oneof payload {
+        // 헬스체크
+        S2CPingReq pingRequest = 55;
+        C2SPongRes pongResponse = 56;
+    }
+}

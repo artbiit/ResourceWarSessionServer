@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package lobby;
+
+import "data.proto";
+
+// 대기실 생성 요청
+message C2SCreateRoomReq {
+    bool isPrivate = 1; // 비공개 방 여부 (true일때 private)
+}
+  
+// 대기실 생성 결과
+message S2CCreateRoomRes {
+    string gameCode = 1; // 방 코드
+    string gameUrl = 2;
+}
+  
+// 대기실 매칭 취소
+message C2SMatchCancelReq {
+}
+
+// 대기실 매칭 진행상황
+message S2CMatchProgressNoti {
+  uint8 matchProgressCode = 1;
+  uint64 elapsedTime = 2;
+}
+
+// 대기실 입장 요청 (private 일때 만)
+message C2SJoinRoomReq {
+  string gameCode = 1; // null 불가능
+}
+
+message S2CJoinRoomRes {
+  uint8 joinRoomResultCode = 1;
+  string gameUrl =2;
+}
+
+// 대기실 나가기 요청
+message C2SQuitRoomReq {
+}
+
+// 대기실 나가기 알리기
+message S2CQuitRoomNoti {
+    uint8 quitRoomCode = 1;
+}
+
+// 팀 변경 요청 (자신이 팀을 직접 변경)
+message C2STeamChangeReq {
+    uint8 teamIndex = 1; // 팀 변경
+}
+  
+// 팀 변경 결과
+message S2CTeamChangeNoti {
+    uint8 teamChangeResultCode = 1; // 0이면 성공
+}
+
+// 대기실 입장 알리기 (팀 변경 결과에서도 Sync로 보내줌)
+message S2CSyncRoomNoti {
+  repeated data.PlayerRoomInfo players = 1;
+}
+
+// 게임 시작 요청 (준비 완료)
+message C2SGameStartReq {
+    bool ready = 1;
+}
+
+// 게임 시작 결과 (준비 완료)
+message S2CGameStartRes {
+  uint8 gameStartResultCode = 1; // 0이면 성공
+}
+
+// 로딩 진행도 (해당 게임 세션에 들어와 있는 애들한테 Noti)
+message C2SLoadProgressNoti {
+  uint8 progress = 1; // 0~100 백분율
+}
+
+// 로딩 동기화 알림
+message S2CSyncLoadNoti {
+  uint8 progress = 1; 
+  uint8 progressCode = 2; // 0 아니면 문제 발생
+}
+
+// 최상위 GamePacket 메시지
+message GamePacket {
+    oneof payload {
+        // 대기실 관련 요청 및 응답
+        C2SCreateRoomReq createRoomReq = 17;
+        S2CCreateRoomRes createRoomRes = 18;
+        C2SMatchCancelReq matchCancelReq = 19;
+        S2CMatchProgressNoti matchProgressNoti = 20;
+
+        // 대기실 입장 및 나가기
+        C2SJoinRoomReq joinRoomReq = 21;
+        S2CJoinRoomRes joinRoomRes = 22;
+        C2SQuitRoomReq quitRoomReq = 23;
+        S2CQuitRoomNoti quitRoomNoti = 24;
+
+        // 팀 변경
+        C2STeamChangeReq teamChangeReq = 25;
+        S2CTeamChangeNoti teamChangeNoti = 26;
+
+        // 대기실 동기화 및 게임 시작
+        S2CSyncRoomNoti syncRoomNoti = 27;
+        C2SGameStartReq gameStartReq = 28;
+        S2CGameStartRes gameStartRes = 29;
+
+        // 로딩 진행
+        C2SLoadProgressNoti loadProgressNoti = 30;
+        S2CSyncLoadNoti syncLoadNoti = 31;
+    }
+}
