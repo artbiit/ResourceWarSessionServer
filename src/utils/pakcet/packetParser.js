@@ -4,16 +4,11 @@ import CustomError from '../error/customError.js';
 import configs from '../../configs/configs.js';
 const { GlobalFailCode, CLIENT_VERSIONS } = configs;
 
-export const packetParser = (socket, packetType, version, sequence, payloadBuffer) => {
+export const packetParser = (socket, packetType, version, payloadBuffer) => {
   //버전 호환 필터
   if (!CLIENT_VERSIONS.includes(version)) {
     throw new CustomError(GlobalFailCode.INVALID_REQUEST, 'VERSION_MISMATCH');
   }
-
-  // const user = getUserBySocket(socket);
-  // if (user && user.sequence !== sequence) {
-  //   throw new CustomError(GlobalFailCode.INVALID_REQUEST, 'INVALID_SEQUENCE');
-  // }
 
   const protoMessages = getProtoMessages();
   // 핸들러 ID에 따라 적절한 payload 구조를 디코딩

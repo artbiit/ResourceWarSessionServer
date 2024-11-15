@@ -55,10 +55,7 @@ export const loadProtos = async () => {
           Object.entries(namespace.nested).forEach(([typeName, type]) => {
             if (type instanceof protobuf.Type) {
               const fullName = `${namespaceName}.${typeName}`;
-              if (!protoMessages[namespaceName]) {
-                protoMessages[namespaceName] = {};
-              }
-              protoMessages[namespaceName][typeName] = root.lookupType(fullName);
+              protoMessages[fullName] = root.lookupType(fullName);
               loadedCount++;
             }
           });

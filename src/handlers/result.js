@@ -1,4 +1,4 @@
-import { ReversePacketType } from '../constants/header.js';
+import { ReversePacketType } from '../configs/constants/header.js';
 
 //Todo : 브로드캐스트, 유니캐스트, 단일 응답 구분해야함
 
