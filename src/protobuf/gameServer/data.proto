@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package data;
+
+// GameState 메시지
+message GameState {
+    uint32 gold = 1;
+    uint32 baseHp = 2;
+    repeated TowerData towers = 3;
+    repeated MonsterData monsters = 4;
+    uint32 monsterLevel = 5;
+    uint32 score = 6;
+    repeated Position monsterPath = 7;
+    Position basePosition = 8;
+  }
+
+  // 아이템 데이터
+message ItemData {
+    uint32 itemCode = 1;
+    uint32 itemType = 2;
+    uint32 amount = 3;
+  }
+
+  // 플레이어 정보
+message PlayerRoomInfo {
+    uint32 playerId = 1;
+    string playerName = 2;
+    uint32 avartarItem = 3; //repeated?
+    uint8 teamIndex = 4;
+    bool ready = 5;
+}
+
+// 플레이어 초기 정보
+message PlayerInitialData {
+    uint32 playerId = 1;
+    string playerName = 2;
+    uint32 avartarItem = 3; //repeated?
+    uint8 teamIndex = 4;
+    Position position = 5;
+}
+  
+// 기타 필요한 메시지 정의
+message PlayerState {
+    uint32 playerId = 1;
+    uint8 actionType = 2;
+    Position position = 3;
+    uint32 equippedItem = 4;
+}
+  
+message FieldUnit {
+    uint16 id = 1;
+    uint8 state = 2; // 상태아이디로 이동인지, 근거리공격인지, 원거리공격인지 등등
+    Position position = 3;
+    uint16 hp = 4;
+    uint16 damage = 5;
+    uint16 targetId = 6;
+}
+  
+message Position {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
