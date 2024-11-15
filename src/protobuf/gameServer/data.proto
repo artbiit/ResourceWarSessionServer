@@ -6,8 +6,6 @@ package data;
 message GameState {
     uint32 gold = 1;
     uint32 baseHp = 2;
-    repeated TowerData towers = 3;
-    repeated MonsterData monsters = 4;
     uint32 monsterLevel = 5;
     uint32 score = 6;
     repeated Position monsterPath = 7;

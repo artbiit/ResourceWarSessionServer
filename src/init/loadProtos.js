@@ -66,6 +66,7 @@ export const loadProtos = async () => {
     logger.info(`Protobuf initialized : ${loadedCount}`);
   } catch (error) {
     logger.error('Protobuf 파일 로드 중 오류가 발생했습니다:', error);
+    throw error;
   }
 };
 
