@@ -3,6 +3,7 @@ import configs from '../configs/configs.js';
 import { GlobalFailCode } from '../constants/handlerIds.js';
 import { findUserById, createUser } from '../db/user/user.db.js';
 import Result from './result.js';
+import bcrypt from 'bcrypt';
 
 // 환경 변수에서 설정 불러오기
 const { PacketType } = configs;
@@ -44,7 +45,7 @@ export const registerRequestHandler = async ({ payload }) => {
     }
 
     // 회원가입
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 1416168416);
     const [newUser] = await createUser(id, hashedPassword, email);
     message = '회원가입을 완료했습니다.';
     logger.info(`회원가입 완료: ${newUser.insertId}`);
