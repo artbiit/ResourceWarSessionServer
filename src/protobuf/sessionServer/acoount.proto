@@ -11,7 +11,7 @@ message C2SSignUpReq {
   
 // 회원가입 결과
 message S2CSignUpRes {
-    uint8 signUpResultCode = 1; // 0이면 성공
+    uint32 signUpResultCode = 1; // 0이면 성공
 }
 
 // 로그인 요청
@@ -22,7 +22,7 @@ message C2SSignInReq {
   
   // 로그인 결과 (토큰 발급)
 message S2CSignInRes {
-    uint8 signInResultCode = 1; // 0이면 성공
+    uint32 signInResultCode = 1; // 0이면 성공
     string token = 2;
     uint64 expirationTime = 3;  // 만료시간
 }
@@ -35,6 +35,6 @@ message C2SRefreshTokenReq {
 message S2CRefreshTokenRes {
     string token = 1;
     uint64 expirationTime = 2; // 만료시간 다시 정해서 보내주는거 (게임 시작하면 한번더 널널하게 보내주기)
-    uint8 refreshTokenResultCode = 3; // 0이면 성공
+    uint32 refreshTokenResultCode = 3; // 0이면 성공
 }
 

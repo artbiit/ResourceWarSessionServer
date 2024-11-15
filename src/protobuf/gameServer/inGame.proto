@@ -16,34 +16,34 @@ message S2CSyncPlayersNoti {
 
 // 용광로 상태 동기화
 message S2CSyncFurnaceStateNoti {
-    uint8 teamIndex = 1;
-    uint8 furnaceStateCode = 2;
+    uint32 teamIndex = 1;
+    uint32 furnaceStateCode = 2;
     float progress = 3; // 백분율
 }
 
 // 제제소 상태 동기화
 message S2CSawmillStatusNoti {
-    uint8 teamIndex = 1;
-    uint8 sawmillStateCode = 2;
+    uint32 teamIndex = 1;
+    uint32 sawmillStateCode = 2;
     float progress = 3; // 백분율
 }
 
 // 제작소 상태 동기화
 message S2CWorkbenchStatusNoti {
-    uint8 teamIndex = 1;
-    uint8 workbenchStateCode = 2;
+    uint32 teamIndex = 1;
+    uint32 workbenchStateCode = 2;
     float progress = 3; // 백분율
 }  
 
 // 플레이어 액션 요청
  message C2SPlayerActionReq {
-    uint8 actionType = 1;
+    uint32 actionType = 1;
     uint32 targetObjectId = 2; // 행동 대상
 }
   
 // 플레이어 액션 결과
 message S2CPlayerActionRes {
-    uint8 actionType = 1;
+    uint32 actionType = 1;
     uint32 targetObjectId = 2;
     bool success = 3;
 }
@@ -51,22 +51,22 @@ message S2CPlayerActionRes {
 // 객체 스폰 알림 
 message S2CSpawnObjectNoti {
     uint32 objectId = 1;
-    uint8 objectType = 2; // 구조물, 유닛
-    uint8 areaType = 3; // 전장, 채굴장, 벌목장, 사냥터
+    uint32 objectType = 2; // 구조물, 유닛
+    uint32 areaType = 3; // 전장, 채굴장, 벌목장, 사냥터
     Position position = 4;
 }
 
 // 객체 파괴 알림
 message C2SDestoryObjectReq {
     uint32 objectId = 1;
-    uint8 objectType = 2;
-    uint8 areaType = 3; // 전장, 채굴장, 벌목장, 사냥터 (검증 용)
+    uint32 objectType = 2;
+    uint32 areaType = 3; // 전장, 채굴장, 벌목장, 사냥터 (검증 용)
 }
 
 message S2CDestoryObjectNoti {
     uint32 objectId = 1;
-    uint8 objectType = 2;
-    uint8 areaType = 3; // 전장, 채굴장, 벌목장, 사냥터 (검증 용)
+    uint32 objectType = 2;
+    uint32 areaType = 3; // 전장, 채굴장, 벌목장, 사냥터 (검증 용)
 }
 
 // 전장 유닛 동기화 (변동사항만 보냄)
@@ -81,30 +81,30 @@ message C2SSurrenderReq {
 
 // 자기 자신에게 알리기
 message S2CSurrenderRes {
-    uint8 surrenderResultCode = 1;
-    timestamp surrenderStartTime = 2;
+    uint32 surrenderResultCode = 1;
+    uint64 surrenderStartTime = 2;
 }
 
 // 팀 항복투표를 했다.
 message S2CSurrenderNoti {
     uint32 playerId = 1;
-    timestamp surrenderStartTime = 2;
+    uint64 surrenderStartTime = 2;
 }
 
 // 게임 종료 (게임 진행을 우리가 하고 있기 때문에 서버에서 먼저 보내줌)
 message S2CGameOverNoti {
-    uint8 gameOverType = 1; //(어떠한 사유로 게임이 끝났는지)
-    uint8 teamIndex = 2;
+    uint32 gameOverType = 1; //(어떠한 사유로 게임이 끝났는지)
+    uint32 teamIndex = 2;
 }
   
 // 공용맵 이동
 message C2SMoveToAreaMapReq {
-    uint8 currentAreaType = 1; 
-    uint8 destinationAreaType = 2;
+    uint32 currentAreaType = 1; 
+    uint32 destinationAreaType = 2;
 }
 
 message S2CMoveToAreaMap {
-    uint8 joinMapResultCode = 1;
+    uint32 joinMapResultCode = 1;
     Position position = 2;
 }
   
@@ -114,7 +114,7 @@ message C2SWorkbenchReq {
 }
   
 message S2CWorkbenchRes {
-    uint8 workbenchResultCode = 1;
+    uint32 workbenchResultCode = 1;
 }
 
 // 용광로
@@ -123,7 +123,7 @@ message C2SFurnaceReq {
 }
   
 message S2CFurnaceRes {
-    uint8 furnaceResultCode = 1;
+    uint32 furnaceResultCode = 1;
 }
 
 // 제제소
@@ -132,5 +132,5 @@ message C2SSawmillReq {
 }
   
 message S2CSawmillRes {
-    uint8 sawmillResultCode = 1;
+    uint32 sawmillResultCode = 1;
 }

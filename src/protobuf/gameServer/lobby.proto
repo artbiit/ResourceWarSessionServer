@@ -29,7 +29,7 @@ message C2SMatchReq {
 
 // 대기실 매칭 진행상황 (주기적으로 알려줘야함)
 message S2CMatchProgressNoti {
-  uint8 matchProgressCode = 1;
+  uint32 matchProgressCode = 1;
   uint64 elapsedTime = 2;
   string gameUrl = 3; // 매칭이 완료되면 gameUrl을 넣어줘야함.
 }
@@ -40,7 +40,7 @@ message C2SJoinRoomReq {
 }
 
 message S2CJoinRoomRes {
-  uint8 joinRoomResultCode = 1;
+  uint32 joinRoomResultCode = 1;
   string gameUrl =2;
 }
 
@@ -55,17 +55,17 @@ message S2CQuitRoomNoti {
 
 // 팀 변경 요청 (자신이 팀을 직접 변경)
 message C2STeamChangeReq {
-    uint8 teamIndex = 1; // 팀 변경
+    uint32 teamIndex = 1; // 팀 변경
 }
   
 // 팀 변경 결과 (자기 자신에게)
 message S2CTeamChangeRes {
-    uint8 teamChangeResultCode = 1; // 0이면 성공
+    uint32 teamChangeResultCode = 1; // 0이면 성공
 }
 
 // 대기실 입장 알리기 (팀 변경 결과에서도 Sync로 보내줌)
 message S2CSyncRoomNoti {
-  repeated data.PlayerRoomInfo players = 1;
+  repeated PlayerRoomInfo players = 1;
 }
 
 // 게임 시작 요청 (준비 완료)
@@ -75,12 +75,12 @@ message C2SGameStartReq {
 
 // 게임 시작 결과 (준비 완료)
 message S2CGameStartRes {
-  uint8 gameStartResultCode = 1; // 0이면 성공
+  uint32 gameStartResultCode = 1; // 0이면 성공
 }
 
 // 로딩 진행도 (해당 게임 세션에 들어와 있는 애들한테 Noti)
 message C2SLoadProgressNoti {
-  uint8 progress = 1; // 0~100 백분율
+  uint32 progress = 1; // 0~100 백분율
 }
 
 // 로딩 동기화 알림 (누가 얼마나 진행되고 있는지)
@@ -89,6 +89,6 @@ message S2CSyncLoadNoti {
 
   message SyncLoadData {
     uint32 playerId = 1;
-    uint8 progress = 2;
+    uint32 progress = 2;
   }
 }
