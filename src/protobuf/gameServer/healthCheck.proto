@@ -12,12 +12,3 @@ message S2CPingReq {
 message C2SPongRes {
     int64 clientTime = 1; // 클라이언트 시간
 }
-
-// 최상위 GamePacket 메시지
-message GamePacket {
-    oneof payload {
-        // 헬스체크
-        S2CPingReq pingRequest = 55;
-        C2SPongRes pongResponse = 56;
-    }
-}

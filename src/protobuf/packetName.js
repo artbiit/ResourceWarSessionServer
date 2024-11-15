@@ -7,9 +7,6 @@ export const packetNames = {
     PlayerState: 'data.PlayerState',
     FieldUnit: 'data.FieldUnit',
     Position: 'data.Position',
-    BaseData: 'data.BaseData',
-    TowerData: 'data.TowerData',
-    MonsterData: 'data.MonsterData',
   },
   account: {
     C2SSignUpReq: 'account.C2SSignUpReq',

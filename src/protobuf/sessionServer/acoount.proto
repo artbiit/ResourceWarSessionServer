@@ -27,7 +27,6 @@ message S2CSignInRes {
     uint64 expirationTime = 3;  // 만료시간
 }
 
-  // 토큰 재발급 요청
 message C2SRefreshTokenReq {
     string token = 1;
 }
@@ -35,21 +34,7 @@ message C2SRefreshTokenReq {
   // 토큰 재발급 결과
 message S2CRefreshTokenRes {
     string token = 1;
-    uint64 expirationTime = 2; // 만료시간
+    uint64 expirationTime = 2; // 만료시간 다시 정해서 보내주는거 (게임 시작하면 한번더 널널하게 보내주기)
     uint8 refreshTokenResultCode = 3; // 0이면 성공
 }
 
-// 최상위 GamePacket 메시지
-message GamePacket {
-    oneof payload {
-        // 회원가입 및 로그인
-        C2SSignUpReq signUpRequest = 11;
-        S2CSignUpRes signUpResponse = 12;
-        C2SSignInReq signInRequest = 13;
-        S2CSignInRes signInResponse = 14;
-
-        // 토큰 재발급
-        C2SRefreshTokenReq refreshTokenRequest = 15;
-        S2CRefreshTokenRes refreshTokenResponse = 16;
-    }
-}
