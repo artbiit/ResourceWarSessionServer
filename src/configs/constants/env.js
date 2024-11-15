@@ -10,6 +10,7 @@ const requiredEnv = {
   DB: ['HOST', 'PORT', 'USER', 'PASSWORD', 'NAME', 'CONNECTION_LIMIT'],
   SERVER: ['PORT', 'BIND'],
   REDIS: ['HOST', 'PORT', 'PASSWORD'],
+  SECURE: ['PEPPER'],
   LOGGER: ['STACK_TRACE'],
 };
 

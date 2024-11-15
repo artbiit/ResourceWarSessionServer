@@ -3,10 +3,11 @@ import configs from '../configs/configs.js';
 import { GlobalFailCode } from '../constants/handlerIds.js';
 import { findUserById, createUser } from '../db/user/user.db.js';
 import Result from './result.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
+import { getRedis } from '../redis.js';
 
 // 환경 변수에서 설정 불러오기
-const { PacketType } = configs;
+const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
 
 /***
  * - 회원가입 요청(request) 함수
@@ -15,11 +16,12 @@ const { PacketType } = configs;
  *
  * @param {string} param.payload.id - 유저의 ID
  * @param {string} param.payload.password - 유저의 비밀번호
- * @param {string} param.payload.email - 유저의 이메일
+ * @param {string} param.payload.nickname - 유저의 닉네임
+ * @param {string} param.payload.user_name - 유저의 이름
  * @returns {void} 별도의 반환 값은 없으며, 성공 여부와 메시지를 클라이언트에게 전송.
  */
 export const registerRequestHandler = async ({ payload }) => {
-  const { id, password, email } = payload;
+  const { id, password, nickname, user_name } = payload;
 
   // response data init
   let failCode = GlobalFailCode.NONE;
@@ -44,9 +46,22 @@ export const registerRequestHandler = async ({ payload }) => {
       failCode = GlobalFailCode.AUTHENTICATION_FAILED;
     }
 
+    //redis 불러오기
+    const redis = await getRedis();
+
     // 회원가입
-    const hashedPassword = await bcrypt.hash(password, 1416168416);
+    const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, SECURE_SALT);
     const [newUser] = await createUser(id, hashedPassword, email);
+    const Account = {
+      id : id,
+      nickname : nickname,
+      user_name : user_name,
+      password : hashedPassword,
+      create_at : Date.now(),
+      update_at : Date.now(),
+    }
+    await redis.lpush(`Account:${id}`, Account);
+
     message = '회원가입을 완료했습니다.';
     logger.info(`회원가입 완료: ${newUser.insertId}`);
   } catch (error) {
