@@ -1,10 +1,8 @@
 import logger from '../utils/logger.js';
 import configs from '../configs/configs.js';
-import { GlobalFailCode } from '../constants/handlerIds.js';
-import { findUserById, createUser } from '../db/user/user.db.js';
 import Result from './result.js';
 import bcrypt from 'bcryptjs';
-import { getRedis } from '../redis.js';
+import { getRedis } from '../db/redis.js';
 
 // 환경 변수에서 설정 불러오기
 const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
@@ -17,16 +15,17 @@ const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
  * @param {string} param.payload.id - 유저의 ID
  * @param {string} param.payload.password - 유저의 비밀번호
  * @param {string} param.payload.nickname - 유저의 닉네임
- * @param {string} param.payload.user_name - 유저의 이름
+ * 
  * @returns {void} 별도의 반환 값은 없으며, 성공 여부와 메시지를 클라이언트에게 전송.
  */
 export const registerRequestHandler = async ({ payload }) => {
-  const { id, password, nickname, user_name } = payload;
+  const { id, password, nickname } = payload;
+  console.log(id, password,nickname);
 
   // response data init
-  let failCode = GlobalFailCode.NONE;
   let message = undefined;
   let success = true;
+  let signUpResultCode  = 0;
 
   try {
     // 비밀번호 유효성 검사
@@ -35,41 +34,33 @@ export const registerRequestHandler = async ({ payload }) => {
       success = false;
       message =
         '비밀번호는 최소 대문자 1개와 특수문자 1개를 포함해야 하며, 한글을 포함할 수 없고, 최소 6자 이상입니다.';
-      failCode = GlobalFailCode.AUTHENTICATION_FAILED;
     }
 
     // 아이디 기반으로 유저 찾기
-    const userByDB = await findUserById(id);
-    if (userByDB) {
-      success = false;
-      message = '이미 존재하는 유저입니다.';
-      failCode = GlobalFailCode.AUTHENTICATION_FAILED;
-    }
-
     //redis 불러오기
     const redis = await getRedis();
 
     // 회원가입
-    const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, SECURE_SALT);
-    const [newUser] = await createUser(id, hashedPassword, email);
+    const salt = await bcrypt.genSalt(Number(SECURE_SALT));
+    const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, salt);
     const Account = {
       id : id,
       nickname : nickname,
-      user_name : user_name,
       password : hashedPassword,
       create_at : Date.now(),
       update_at : Date.now(),
     }
+    console.log(Account);
     await redis.lpush(`Account:${id}`, Account);
 
     message = '회원가입을 완료했습니다.';
-    logger.info(`회원가입 완료: ${newUser.insertId}`);
+    //logger.info(`회원가입 완료: ${newUser.insertId}`);
   } catch (error) {
     success = false;
     message = '회원가입 과정 중 문제가 발생했습니다..';
-    failCode = GlobalFailCode.AUTHENTICATION_FAILED;
+    signUpResultCode = 1;
     logger.error(`registerRequestHandler Error: ${error.message}`);
   }
 
-  return new Result({ success, message, failCode }, PacketType.REGISTER_RESPONSE);
+  return new Result({ signUpResultCode }, PacketType.SIGN_UP_RESPONSE);
 };

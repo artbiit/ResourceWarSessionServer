@@ -1,9 +1,6 @@
-import logger from '../utils/logger.js';
-import { cacheUserToken, findUserByIdPw, getUserToken } from '../db/user/user.db.js';
-import Result from './result.js';
 import { getRedis } from '../redis.js';
 import { v4 as uuidv4 } from 'uuid';
-
+import logger from '../../utils/logger.js';
 
 const GAME_ID = uuidv4();
 
@@ -13,7 +10,6 @@ const LobbyState = {
 };
 
 export const createLobby = async (isPrivate) => {
-  const { isPrivate } = payload;
   const redis = await getRedis();
 
   const player_count = 0;
@@ -42,6 +38,8 @@ export const createLobby = async (isPrivate) => {
   } catch (error) {
     logger.error(`Failed to Create Lobby : ${error.message}`);
   }
+  const gameCode = GAME_ID;
+  const gameUrl = '여기에 게임 URL 넣기';
 
-  return [GAME_ID, "여기에 게임 URL 넣기"];
+  return { gameCode : gameCode, gameUrl : gameUrl };
 };

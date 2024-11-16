@@ -1,12 +1,14 @@
 import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
+import { createLobbyHandler } from './Lobby/lobby.handler.js';
+import { registerRequestHandler } from './register.handler.js';
 
 const { PacketType } = configs;
 
 const handlers = {
   [PacketType.SIGN_UP_REQUEST]: {
-    handler: undefined,
+    handler: registerRequestHandler,
     protoType: 'account.C2SSignUpReq',
   },
   [PacketType.SIGN_UP_RESPONSE]: {
@@ -28,6 +30,14 @@ const handlers = {
   [PacketType.REFRESH_TOKEN_RESPONSE]: {
     handler: undefined,
     protoType: 'account.S2CRefreshTokenRes',
+  },
+  [PacketType.CREATE_ROOM_REQUEST]: {
+    handler: createLobbyHandler,
+    protoType: 'lobby.C2SCreateRoomReq',
+  },
+  [PacketType.CREATE_ROOM_RESPONSE]: {
+    handler: undefined,
+    protoType: 'lobby.S2CCreateRoomRes',
   },
 };
 
