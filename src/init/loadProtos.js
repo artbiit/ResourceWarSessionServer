@@ -55,10 +55,7 @@ export const loadProtos = async () => {
           Object.entries(namespace.nested).forEach(([typeName, type]) => {
             if (type instanceof protobuf.Type) {
               const fullName = `${namespaceName}.${typeName}`;
-              if (!protoMessages[namespaceName]) {
-                protoMessages[namespaceName] = {};
-              }
-              protoMessages[namespaceName][typeName] = root.lookupType(fullName);
+              protoMessages[fullName] = root.lookupType(fullName);
               loadedCount++;
             }
           });
@@ -69,6 +66,7 @@ export const loadProtos = async () => {
     logger.info(`Protobuf initialized : ${loadedCount}`);
   } catch (error) {
     logger.error('Protobuf 파일 로드 중 오류가 발생했습니다:', error);
+    throw error;
   }
 };
 

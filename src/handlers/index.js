@@ -8,7 +8,6 @@ const handlers = {
   [PacketType.REGISTER_REQUEST]: {
     handler: undefined,
     protoType: 'C2SRegisterRequest',
-    fieldName: 'registerRequest',
   },
 };
 export const getHandlerById = (handlerId) => {
