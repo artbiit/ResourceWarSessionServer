@@ -20,7 +20,7 @@ export const createLobby = async (isPrivate) => {
     create_at: Date.now(),
     update_at: Date.now(),
     isPrivate: isPrivate,
-    state: LobbyState,
+    state: LobbyState.NOT_READY,
     max_player: max_player,
     player_count: player_count,
   };
@@ -33,7 +33,6 @@ export const createLobby = async (isPrivate) => {
     if (!isPrivate) {
       transaction.rpush('LobbyQueue', GAME_ID);
     }
-
     await transaction.exec();
   } catch (error) {
     logger.error(`Failed to Create Lobby : ${error.message}`);

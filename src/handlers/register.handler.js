@@ -3,6 +3,7 @@ import configs from '../configs/configs.js';
 import Result from './result.js';
 import bcrypt from 'bcryptjs';
 import { getRedis } from '../db/redis.js';
+import { postgres } from '../db/postgresql.js';
 
 // 환경 변수에서 설정 불러오기
 const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
@@ -15,17 +16,17 @@ const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
  * @param {string} param.payload.id - 유저의 ID
  * @param {string} param.payload.password - 유저의 비밀번호
  * @param {string} param.payload.nickname - 유저의 닉네임
- * 
+ *
  * @returns {void} 별도의 반환 값은 없으며, 성공 여부와 메시지를 클라이언트에게 전송.
  */
 export const registerRequestHandler = async ({ payload }) => {
   const { id, password, nickname } = payload;
-  console.log(id, password,nickname);
+  //console.log(id, password,nickname);
 
   // response data init
   let message = undefined;
   let success = true;
-  let signUpResultCode  = 0;
+  let signUpResultCode = 0;
 
   try {
     // 비밀번호 유효성 검사
@@ -38,20 +39,33 @@ export const registerRequestHandler = async ({ payload }) => {
 
     // 아이디 기반으로 유저 찾기
     //redis 불러오기
-    const redis = await getRedis();
-
     // 회원가입
     const salt = await bcrypt.genSalt(Number(SECURE_SALT));
     const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, salt);
     const Account = {
-      id : id,
-      nickname : nickname,
-      password : hashedPassword,
-      create_at : Date.now(),
-      update_at : Date.now(),
-    }
-    console.log(Account);
-    await redis.lpush(`Account:${id}`, Account);
+      id: id,
+      nickname: nickname,
+      password: hashedPassword,
+      create_at: Date.now(),
+      update_at: Date.now(),
+    };
+    const insertUser = async (Account) => {
+      try {
+        const result = await postgres.execute(
+          `INSERT INTO Account (nickname, user_name, password, create_at, update_at) VALUES ($1, $2, $3, DEFAULT, DEFAULT) RETURNING id`,
+          [
+            Account.nickname,
+            Account.id,
+            Account.password,
+          ],
+          //`SELECT * FROM ACCOUNT`,
+        );
+        console.log('User inserted with ID:', result);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    await insertUser(Account);
 
     message = '회원가입을 완료했습니다.';
     //logger.info(`회원가입 완료: ${newUser.insertId}`);

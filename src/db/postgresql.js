@@ -66,6 +66,7 @@ class PostgresService {
 
       try {
         const result = await this.pool.query(current.query, current.params);
+        
         current.resolve(result);
       } catch (error) {
         logger.error(`PostgresService.processQueue error: ${error}`);

@@ -1,7 +1,7 @@
 import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
-import { createLobbyHandler } from './Lobby/lobby.handler.js';
+import { createLobbyHandler, joinLobbyHandler } from './Lobby/lobby.handler.js';
 import { registerRequestHandler } from './register.handler.js';
 
 const { PacketType } = configs;
@@ -38,6 +38,14 @@ const handlers = {
   [PacketType.CREATE_ROOM_RESPONSE]: {
     handler: undefined,
     protoType: 'lobby.S2CCreateRoomRes',
+  },
+  [PacketType.JOIN_ROOM_REQUEST]: {
+    handler: joinLobbyHandler,
+    protoType: 'lobby.C2SJoinRoomReq',
+  },
+  [PacketType.JOIN_ROOM_RESPONSE]: {
+    handler: undefined,
+    protoType: 'lobby.S2CJoinRoomRes',
   },
 };
 
