@@ -31,7 +31,12 @@ Object.keys(requiredEnv).forEach((key) => {
     if (!config[key]) {
       config[key] = {};
     }
-    config[key][envVar] = process.env[fullEnvVar];
+
+    if (!isNaN(process.env[fullEnvVar])) {
+      config[key][envVar] = Number(process.env[fullEnvVar]);
+    } else {
+      config[key][envVar] = process.env[fullEnvVar];
+    }
   });
 });
 
