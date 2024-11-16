@@ -1,8 +1,6 @@
 import configs from '../configs/configs.js';
-import { getHandlerById } from '../handlers/index.js';
-import { handleError } from '../utils/error/errorHandler.js';
 import { packetParser } from '../utils/packet/packetParser.js';
-import { createPacket } from '../utils/packet/createPacket.js';
+import { enqueueReceive } from '../utils/socket/messageQueue.js';
 
 const { PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH, PACKET_TOTAL_LENGTH, PACKET_PAYLOAD_LENGTH } =
   configs;
@@ -23,20 +21,9 @@ export const onData = (socket) => async (data) => {
     if (socket.buffer.length >= requiredLength) {
       const payloadData = socket.buffer.subarray(offset, requiredLength);
       socket.buffer = socket.buffer.subarray(requiredLength);
-
-      let result = null;
-      try {
-        const payload = packetParser(packetType, payloadData);
-        const handler = getHandlerById(packetType);
-        result = await handler({ socket, payload });
-      } catch (error) {
-        result = handleError(packetType, error);
-      } finally {
-        if (result) {
-          const response = createPacket(result.responseType, '', result.payload);
-          socket.write(response);
-        }
-      }
+      const payload = packetParser(packetType, payloadData);
+      payload.token = token;
+      enqueueReceive(socket.id, packetType, payload);
     } else {
       break;
     }
