@@ -133,6 +133,8 @@ const processReceiveQueue = async (socketId) => {
         const handler = getHandlerById(packetType);
         if (handler) {
           result = await handler({ socket, payload });
+        } else {
+          logger.warn(`processReceiveQueue. Unknown handler Id : ${packetType}`);
         }
       } catch (error) {
         result = handleError(packetType, error);
