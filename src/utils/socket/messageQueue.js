@@ -95,7 +95,7 @@ export const dequeueReceive = (socketId) => {
 const processSendQueue = async (socketId) => {
   const userQueue = getUserQueue(socketId);
   if (!userQueue) return;
-  if (userQueue.processingSend) return;
+  if (userQueue.processingSend === true) return;
   userQueue.processingSend = true;
 
   const { sendQueue, socket } = userQueue;
@@ -105,7 +105,7 @@ const processSendQueue = async (socketId) => {
     const message = sendQueue.shift();
     if (message) {
       try {
-        socket.write(message);
+        await socket.write(message);
       } catch (err) {
         logger.error(`Failed to send message to socket ${socketId}: ${err}`);
       }
@@ -118,7 +118,7 @@ const processSendQueue = async (socketId) => {
 const processReceiveQueue = async (socketId) => {
   const userQueue = getUserQueue(socketId);
   if (!userQueue) return;
-  if (userQueue.processingReceive) return;
+  if (userQueue.processingReceive === true) return;
   userQueue.processingReceive = true;
 
   const { receiveQueue, socket } = userQueue;
