@@ -1,6 +1,6 @@
 import { createPacket } from '../response/createPacket.js';
-const makeNotification = (packetType, user, payload) => {
-  return createPacket(packetType, user, payload);
+const makeNotification = (packetType, token = '', payload) => {
+  return createPacket(packetType, token, payload);
 };
 
 export default makeNotification;

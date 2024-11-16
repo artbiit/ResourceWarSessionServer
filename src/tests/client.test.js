@@ -2,15 +2,14 @@ import net from 'net';
 import { loadProtos, getProtoMessages } from '../init/loadProtos.js';
 import { getProtoTypeNameByHandlerId } from '../handlers/index.js';
 import configs from '../configs/configs.js';
-import { createPacket } from '../utils/response/createPacket.js';
-import { packetParser } from '../utils/parser/packetParser.js';
+import { createPacket } from '../utils/packet/createPacket.js';
+import { packetParser } from '../utils/packet/packetParser.js';
 await loadProtos();
 
 const {
   PACKET_TYPE_LENGTH,
   PACKET_TOTAL_LENGTH,
-  PACKET_VERSION_LENGTH,
-  PACKET_SEQUENCE_LENGTH,
+  PACKET_TOKEN_LENGTH,
   PACKET_PAYLOAD_LENGTH,
   CLIENT_VERSIONS,
 } = configs;
@@ -19,7 +18,7 @@ const connections = [];
 
 class Client {
   userId = '';
-  sequence = 0;
+  token = '';
   #handlers = {};
 
   constructor(host = 'localhost', port = 5555) {
@@ -75,7 +74,7 @@ class Client {
     if (!this.client) {
       throw new Error('서버에 연결되어 있지 않습니다.');
     }
-    const wrappedPacket = createPacket(packetType, this, data);
+    const wrappedPacket = createPacket(packetType, '', data);
     this.client.write(wrappedPacket);
   };
 
@@ -84,28 +83,22 @@ class Client {
 
     while (this.buffer.length >= PACKET_TOTAL_LENGTH) {
       const packetType = this.buffer.readUintBE(0, PACKET_TYPE_LENGTH);
-      const versionLength = this.buffer.readUintBE(PACKET_TYPE_LENGTH, PACKET_VERSION_LENGTH);
-      let offset = PACKET_TYPE_LENGTH + PACKET_VERSION_LENGTH;
-      const version = this.buffer.subarray(offset, offset + versionLength).toString();
-      offset += versionLength;
-      const sequence = this.buffer.readUintBE(offset, PACKET_SEQUENCE_LENGTH);
-      offset += PACKET_SEQUENCE_LENGTH;
+      const tokenLength = this.buffer.readUintBE(PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH);
+      let offset = PACKET_TYPE_LENGTH + PACKET_TOKEN_LENGTH;
+      const version = this.buffer.subarray(offset, offset + tokenLength).toString();
+      offset += tokenLength;
       const payloadLength = this.buffer.readUintBE(offset, PACKET_PAYLOAD_LENGTH);
       offset += PACKET_PAYLOAD_LENGTH;
-
       const requiredLength = offset + payloadLength;
 
       if (this.buffer.length >= requiredLength) {
         const payloadData = this.buffer.subarray(offset, requiredLength);
         this.buffer = this.buffer.subarray(requiredLength);
 
-        const payload = packetParser(null, packetType, CLIENT_VERSIONS[0], sequence, payloadData);
+        const payload = packetParser(packetType, payloadData);
         const handler = this.#handlers[packetType];
 
-        console.log(
-          `수신[packetType:${packetType}]|[version:${version}]|[sequence:${sequence}]|\n`,
-          payload,
-        );
+        console.log(`수신[packetType:${packetType}]|[version:${version}]|\n`, payload);
 
         if (handler) {
           await handler({ payload });

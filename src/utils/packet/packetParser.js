@@ -1,24 +1,16 @@
 import { getProtoMessages } from '../../init/loadProtos.js';
-import { getFieldNameByHandlerId, getProtoTypeNameByHandlerId } from '../../handlers/index.js';
+import { getProtoTypeNameByHandlerId } from '../../handlers/index.js';
 import CustomError from '../error/customError.js';
 import configs from '../../configs/configs.js';
-const { GlobalFailCode, CLIENT_VERSIONS } = configs;
+const { GlobalFailCode } = configs;
 
-export const packetParser = (socket, packetType, version, payloadBuffer) => {
-  //버전 호환 필터
-  if (!CLIENT_VERSIONS.includes(version)) {
-    throw new CustomError(GlobalFailCode.INVALID_REQUEST, 'VERSION_MISMATCH');
-  }
-
+export const packetParser = (packetType, payloadBuffer) => {
   const protoMessages = getProtoMessages();
+  const protoType = getProtoTypeNameByHandlerId(packetType);
   // 핸들러 ID에 따라 적절한 payload 구조를 디코딩
-  const gamePacket = protoMessages.GamePacket;
-  let decodedGamePacket = null;
+  const packet = protoMessages[protoType];
 
-  decodedGamePacket = gamePacket.decode(payloadBuffer);
-
-  const field = decodedGamePacket[getFieldNameByHandlerId(packetType)];
-  const payload = { ...field };
+  const payload = packet.decode(payloadBuffer);
 
   const typeName = getProtoTypeNameByHandlerId(packetType);
   const PayloadType = protoMessages[typeName];
