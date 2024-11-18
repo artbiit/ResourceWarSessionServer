@@ -32,6 +32,7 @@ export const removeUserQueue = (socket) => {
   } else {
     logger.warn(`removeUserQueue. ${id || 'Undefined'} is unknown socket`);
   }
+
 };
 
 const getUserQueue = (socketId) => {

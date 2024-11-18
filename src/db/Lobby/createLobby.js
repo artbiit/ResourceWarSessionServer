@@ -13,6 +13,16 @@ export const createLobby = async (isPrivate) => {
   const now = Date.now();
   const GAME_ID = uuidv4();
 
+  // 게임 코드 랜덤 설정
+  async function generateUniqueGameCode() {
+    let gameCode;
+    do {
+      gameCode = Math.floor(100000 + Math.random() * 900000);
+    } while (await redis.exists(`GameSession:${gameCode}`));
+    return gameCode;
+  }
+
+  //게임 세션에 집어넣을 데이터
   const GameSession = {
     game_id: GAME_ID,
     create_at: now,
@@ -23,10 +33,14 @@ export const createLobby = async (isPrivate) => {
     player_count: player_count,
   };
 
+  //랜덤하게 설정된 게임코드
+  const gameCode = await generateUniqueGameCode();
+  console.log('이거 게임코드야 : ', gameCode);
+
   try {
     const transaction = redis.multi();
 
-    transaction.hset(`GameSession:${GAME_ID}`, GameSession);
+    transaction.hset(`GameSession:${gameCode}`, GameSession);
     transaction.rpush('GameSessions', GAME_ID);
     if (!isPrivate) {
       transaction.rpush('LobbyQueue', GAME_ID);
@@ -35,8 +49,6 @@ export const createLobby = async (isPrivate) => {
   } catch (error) {
     logger.error(`Failed to Create Lobby : ${error.message}`);
   }
-  const gameCode = GAME_ID;
-  const gameUrl = '여기에 게임 URL 넣기';
 
-  return { gameCode : gameCode, gameUrl : gameUrl };
+  return { gameCode: gameCode, gameUrl: GAME_ID };
 };

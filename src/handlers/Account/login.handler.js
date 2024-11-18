@@ -16,6 +16,6 @@ const { PacketType} = configs;
  */
 export const loginRequestHandler = async ({ socket, payload }) => {
   const { id, password } = payload;
-  const { signInResultCode, token, expirationTime } = login(id, password);
+  const { signInResultCode, token, expirationTime } = await login(id, password, socket);
   return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
 };

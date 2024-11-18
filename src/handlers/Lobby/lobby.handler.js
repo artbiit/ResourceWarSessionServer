@@ -17,9 +17,9 @@ const { PacketType } = configs;
 export const createLobbyHandler = async ({ socket, payload }) => {
   const { isPrivate } = payload;
   const { gameCode, gameUrl } = await createLobby(isPrivate);
-  //await joinLobbyHandler(socket, {gameCode : gameCode});
+  await joinRoom(gameCode, socket);
 
-  return new Result({ gameCode, gameUrl }, PacketType.CREATE_ROOM_RESPONSE);
+  return new Result({ gameCode : gameCode.toString(), gameUrl }, PacketType.CREATE_ROOM_RESPONSE);
 };
 
 /***
@@ -30,7 +30,7 @@ export const createLobbyHandler = async ({ socket, payload }) => {
 
 export const joinLobbyHandler = async ({ socket, payload }) => {
   const { gameCode } = payload;
-  const { joinRoomResultCode, gameUrl } = await joinRoom(gameCode);
+  const { joinRoomResultCode, gameUrl } = await joinRoom(gameCode, socket);
 
   return new Result({ joinRoomResultCode, gameUrl }, PacketType.JOIN_ROOM_RESPONSE);
 };
