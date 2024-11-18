@@ -95,6 +95,10 @@ export const PacketType = {
   // 헬스체크
   PING_REQUEST: 52,
   PONG_RESPONSE: 53,
+
+  // 대기실 매칭요청
+  MATCH_REQUEST: 54,
+  MATCH_RESPONSE: 55,
 };
 
 export const ReversePacketType = Object.fromEntries(

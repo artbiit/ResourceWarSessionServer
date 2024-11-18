@@ -32,9 +32,16 @@ client.sendMessage(PacketType.SIGN_IN_REQUEST, {
 //   isPrivate: false,
 // });
 
-client.addHandler(PacketType.JOIN_ROOM_RESPONSE, async (payload) => {
+// client.addHandler(PacketType.JOIN_ROOM_RESPONSE, async (payload) => {
+//   // console.log(payload);
+// });
+// client.sendMessage(PacketType.JOIN_ROOM_REQUEST, {
+//   gameCode : "992518",
+// });
+
+client.addHandler(PacketType.MATCH_RESPONSE, async (payload) => {
   // console.log(payload);
 });
-client.sendMessage(PacketType.JOIN_ROOM_REQUEST, {
-  gameCode : "992518",
+client.sendMessage(PacketType.MATCH_REQUEST, {
+  
 });

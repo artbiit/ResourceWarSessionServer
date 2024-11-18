@@ -27,6 +27,12 @@ message S2CMatchCancelRes {
 message C2SMatchReq {
 }
 
+// 대기실 매칭 응답
+message S2CMatchRes {
+  uint32 joinRoomResultCode = 1;
+  string gameUrl =2;
+}
+
 // 대기실 매칭 진행상황 (주기적으로 알려줘야함)
 message S2CMatchProgressNoti {
   uint32 matchProgressCode = 1;
