@@ -48,7 +48,7 @@ const handlers = {
     handler: undefined,
     protoType: 'lobby.S2CJoinRoomRes',
   },
-  [PacketType.MATCH_RESQUEST]: {
+  [PacketType.MATCH_REQUEST]: {
     handler: randomLobbyHandler,
     protoType: 'lobby.C2SMatchReq',
   },

@@ -4,7 +4,7 @@ import logger from '../../utils/logger.js';
 import { JoinRoomCode } from './lobbyConstants.js';
 import { userSessions } from '../../sessions/sessions.js';
 
-export const joinRoom = async (socket) => {
+export const joinRoom = async (gameCode, socket) => {
   const redis = await getRedis();
   const lobbyInfo = await redis.hgetall(`GameSession:${gameCode}`);
   if (!lobbyInfo) {
