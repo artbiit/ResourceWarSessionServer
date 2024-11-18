@@ -1,18 +1,9 @@
-import logger from '../../utils/logger.js';
 import configs from '../../configs/configs.js';
 import Result from '../result.js';
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
-import { postgres } from '../../db/postgresql.js';
+import { login } from '../../db/Account/login.db.js';
 
 // 환경 변수에서 설정 불러오기
-const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
-
-const SignInResultCode = {
-  SUCCESS: 0,
-  IDPW_INVALID: 1,
-  ALREADY_LOGGED_IN: 2,
-};
+const { PacketType} = configs;
 
 /***
  * - 로그인 요청(request) 함수
@@ -25,31 +16,6 @@ const SignInResultCode = {
  */
 export const loginRequestHandler = async ({ socket, payload }) => {
   const { id, password } = payload;
-
-  // response data init
-  let signInResultCode = SignInResultCode.IDPW_INVALID;
-  let message = undefined;
-  let token = '';
-  try {
-    // 아이디와 비밀번호 기반으로 유저 찾기
-    const salt = await bcrypt.genSalt(Number(SECURE_SALT));
-    const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, salt);
-    const checkUser = await postgres.execute(
-      `SELECT * FROM Account WHERE nickname = ($1) AND password = ($2) ;`,
-      [id, hashedPassword],
-    );
-    if (checkUser) {
-      token = uuidv4();
-      signInResultCode = SignInResultCode.SUCCESS;
-    } else {
-      // 비밀번호가 틀렸을 경우
-      message = '아이디 혹은 비밀번호를 확인해주세요.';
-    }
-  } catch (error) {
-    message = message || '로그인 과정 중 문제가 발생했습니다.';
-    logger.error(`loginRequestHandler Error: ${error.message}`);
-  }
-  let expirationTime = Date.now() + 3600000;
-
+  const { signInResultCode, token, expirationTime } = login(id, password);
   return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
 };
