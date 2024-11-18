@@ -34,3 +34,4 @@ export const joinLobbyHandler = async ({ socket, payload }) => {
 
   return new Result({ joinRoomResultCode, gameUrl }, PacketType.JOIN_ROOM_RESPONSE);
 };
+

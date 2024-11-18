@@ -35,7 +35,6 @@ export const createLobby = async (isPrivate) => {
 
   //랜덤하게 설정된 게임코드
   const gameCode = await generateUniqueGameCode();
-  console.log('이거 게임코드야 : ', gameCode);
 
   try {
     const transaction = redis.multi();

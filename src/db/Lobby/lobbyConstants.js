@@ -4,7 +4,8 @@ export const LobbyState = {
 };
 
 export const JoinRoomCode = {
-    EXIST : 0,
-    NOT_EXIST : 1,
-    IS_ALREADY_FULL : 2,
-}
+  EXIST: 0,
+  NOT_EXIST: 1,
+  IS_ALREADY_FULL: 2,
+  PRIVATE_ROOM: 3,
+};

@@ -6,7 +6,6 @@ import { userSessions } from '../../sessions/sessions.js';
 
 export const joinRoom = async (gameCode, socket) => {
   const redis = await getRedis();
-  console.log('이거 게임코드 : ', gameCode);
   const lobbyInfo = await redis.hgetall(`GameSession:${gameCode}`);
   if (!lobbyInfo) {
     // 코드가 틀림
@@ -15,8 +14,11 @@ export const joinRoom = async (gameCode, socket) => {
     // 풀방
     return { joinRoomResultCode: JoinRoomCode.IS_ALREADY_FULL, gameUrl: '' };
   }
+  else if(!lobbyInfo.isPrivate){
+    // private방 일 때
+    return { joinRoomResultCode: JoinRoomCode.PRIVATE_ROOM, gameUrl: '' };
+  }
   lobbyInfo.player_count = (Number(lobbyInfo.player_count) + 1).toString();
-  console.log('대기실 인원 수: ', lobbyInfo.player_count);
 
   redis.hset(`GameSession:${gameCode}`, lobbyInfo);
   const lobbyMember = {
@@ -29,6 +31,6 @@ export const joinRoom = async (gameCode, socket) => {
   };
 
   redis.hset(`LobbyMember:${gameCode}`, lobbyMember);
-  redis.expire(`LobbyMember:${gameCode}`, 30);
+  //redis.expire(`LobbyMember:${gameCode}`, 30);
   return { joinRoomResultCode: JoinRoomCode.EXIST, gameUrl: lobbyInfo.game_id };
 };
