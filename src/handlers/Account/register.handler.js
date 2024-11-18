@@ -1,9 +1,9 @@
-import logger from '../utils/logger.js';
-import configs from '../configs/configs.js';
-import Result from './result.js';
+import logger from '../../utils/logger.js';
+import configs from '../../configs/configs.js';
+import Result from '../result.js';
 import bcrypt from 'bcryptjs';
-import { getRedis } from '../db/redis.js';
-import { postgres } from '../db/postgresql.js';
+import { getRedis } from '../../db/redis.js';
+import { postgres } from '../../db/postgresql.js';
 
 // 환경 변수에서 설정 불러오기
 const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
