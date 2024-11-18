@@ -9,9 +9,9 @@ export const registerRequest = async (id, password, nickname) => {
   let signUpResultCode = SignUpResultCode.ERROR;
 
   //아이디, 비밀번호, 닉네임 유효성 검사
-  const idRegex = /^[a-zA-Z0-9]{2,16}$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?!.*[ㄱ-ㅎ가-힣]).{6,}$/;
-  const nicknameRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9_]+$/;
+  const idRegex = /^[a-zA-Z0-9]{6,16}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?!.*[ㄱ-ㅎ가-힣]).{6,16}$/;
+  const nicknameRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9_]{2,16}$/;
 
   if (!idRegex.test(id)) {
     signUpResultCode = SignUpResultCode.ID_INVALID;
