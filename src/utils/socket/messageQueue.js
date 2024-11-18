@@ -30,7 +30,7 @@ export const removeUserQueue = (socket) => {
   if (queueBySocket[id]) {
     delete queueBySocket[id];
   } else {
-    logger.warn(`removeUserQueue. ${socket?.id} is unknown socket`);
+    logger.warn(`removeUserQueue. ${id || 'Undefined'} is unknown socket`);
   }
 };
 
@@ -45,7 +45,7 @@ const getUserQueue = (socketId) => {
 export const enqueueSend = (socketId, buffer) => {
   const userQueue = getUserQueue(socketId);
   if (userQueue) {
-    getUserQueue(socketId).sendQueue.push(buffer);
+    userQueue.sendQueue.push(buffer);
     processSendQueue(socketId);
   } else {
     logger.error(`enqueueSend. ${socketId} is unknown user`);
