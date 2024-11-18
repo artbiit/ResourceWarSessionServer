@@ -2,6 +2,7 @@ import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { createLobbyHandler, joinLobbyHandler } from './Lobby/lobby.handler.js';
+import { loginRequestHandler } from './login.handler.js';
 import { registerRequestHandler } from './register.handler.js';
 
 const { PacketType } = configs;
@@ -16,7 +17,7 @@ const handlers = {
     protoType: 'account.S2CSignUpRes',
   },
   [PacketType.SIGN_IN_REQUEST]: {
-    handler: undefined,
+    handler: loginRequestHandler,
     protoType: 'account.C2SSignInReq',
   },
   [PacketType.SIGN_IN_RESPONSE]: {

@@ -1,16 +1,12 @@
 import logger from '../utils/logger.js';
-import jwt from 'jsonwebtoken';
 import configs from '../configs/configs.js';
-import { GlobalFailCode } from '../constants/handlerIds.js';
-import { cacheUserToken, findUserByIdPw, getUserToken } from '../db/user/user.db.js';
 import Result from './result.js';
-import { addUser, getUserById } from '../session/user.session.js';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import { postgres } from '../db/postgresql.js';
 
 // 환경 변수에서 설정 불러오기
 const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
-
 
 const SignInResultCode = {
   SUCCESS: 0,
@@ -36,26 +32,14 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   let token = '';
   try {
     // 아이디와 비밀번호 기반으로 유저 찾기
-    const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, SECURE_SALT);
-    const userByDB = await findUserByIdPw(id, hashedPassword);
-    if (userByDB) {
-      const alreadyUser = getUserById(userByDB.seqNo);
-
-      if (alreadyUser) {
-        message = '이미 로그인되어 있는 계정입니다.';
-        signInResultCode = SignInResultCode.ALREADY_LOGGED_IN;
-        throw new Error(message);
-      }
-
-      // 토큰 생성
+    const salt = await bcrypt.genSalt(Number(SECURE_SALT));
+    const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, salt);
+    const checkUser = await postgres.execute(
+      `SELECT * FROM Account WHERE nickname = ($1) AND password = ($2) ;`,
+      [id, hashedPassword],
+    );
+    if (checkUser) {
       token = uuidv4();
-
-      // 토큰 캐싱
-      await addUser(socket, userByDB, token);
-
-      // 성공 메시지
-      message = '로그인에 성공 했습니다.';
-      logger.info(`로그인 성공 : ${userByDB.seqNo}`);
     } else {
       // 비밀번호가 틀렸을 경우
       signInResultCode = SignInResultCode.IDPW_INVALID;
@@ -66,7 +50,9 @@ export const loginRequestHandler = async ({ socket, payload }) => {
     logger.error(`loginRequestHandler Error: ${error.message}`);
   }
   let expirationTime = Date.now() + 3600000;
-/*
+
+  console.log("로그인 : ",signInResultCode, token, expirationTime);
+  /*
 // 로그인 결과 (토큰 발급)
 message S2CSignInRes {
 uint8 signInResultCode = 1; // 0이면 성공
@@ -74,5 +60,5 @@ string token = 2;
 uint64 expirationTime = 3;  // 만료시간
 }
 */
-  return new Result({ signInResultCode, token, expirationTime }, PacketType.LOGIN_RESPONSE);
+  return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
 };

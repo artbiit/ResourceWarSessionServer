@@ -51,16 +51,20 @@ export const registerRequestHandler = async ({ payload }) => {
     };
     const insertUser = async (Account) => {
       try {
-        const result = await postgres.execute(
-          `INSERT INTO Account (nickname, user_name, password, create_at, update_at) VALUES ($1, $2, $3, DEFAULT, DEFAULT) RETURNING id`,
-          [
-            Account.nickname,
-            Account.id,
-            Account.password,
-          ],
-          //`SELECT * FROM ACCOUNT`,
-        );
-        console.log('User inserted with ID:', result);
+        const check = await postgres.execute(`SELECT * FROM Account WHERE nickname = ($1);`, [
+          Account.id,
+        ]);
+        if (!check) {
+          const result = await postgres.execute(
+            `INSERT INTO Account (nickname, user_name, password, create_at, update_at) VALUES ($1, $2, $3, DEFAULT, DEFAULT) RETURNING id`,
+            [Account.nickname, Account.id, Account.password],
+            //`SELECT * FROM ACCOUNT`,
+          );
+          console.log('User inserted with ID:', result);
+        }
+        else{
+          console.log('중복된 아이디 입니다.');
+        }
       } catch (e) {
         console.error(e);
       }
