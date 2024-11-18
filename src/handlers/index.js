@@ -1,12 +1,15 @@
 import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
+import { createLobbyHandler, joinLobbyHandler } from './Lobby/lobby.handler.js';
+import { loginRequestHandler } from './Account/login.handler.js';
+import { registerRequestHandler } from './Account/register.handler.js';
 
 const { PacketType } = configs;
 
 const handlers = {
   [PacketType.SIGN_UP_REQUEST]: {
-    handler: undefined,
+    handler: registerRequestHandler,
     protoType: 'account.C2SSignUpReq',
   },
   [PacketType.SIGN_UP_RESPONSE]: {
@@ -14,7 +17,7 @@ const handlers = {
     protoType: 'account.S2CSignUpRes',
   },
   [PacketType.SIGN_IN_REQUEST]: {
-    handler: undefined,
+    handler: loginRequestHandler,
     protoType: 'account.C2SSignInReq',
   },
   [PacketType.SIGN_IN_RESPONSE]: {
@@ -28,6 +31,22 @@ const handlers = {
   [PacketType.REFRESH_TOKEN_RESPONSE]: {
     handler: undefined,
     protoType: 'account.S2CRefreshTokenRes',
+  },
+  [PacketType.CREATE_ROOM_REQUEST]: {
+    handler: createLobbyHandler,
+    protoType: 'lobby.C2SCreateRoomReq',
+  },
+  [PacketType.CREATE_ROOM_RESPONSE]: {
+    handler: undefined,
+    protoType: 'lobby.S2CCreateRoomRes',
+  },
+  [PacketType.JOIN_ROOM_REQUEST]: {
+    handler: joinLobbyHandler,
+    protoType: 'lobby.C2SJoinRoomReq',
+  },
+  [PacketType.JOIN_ROOM_RESPONSE]: {
+    handler: undefined,
+    protoType: 'lobby.S2CJoinRoomRes',
   },
 };
 
