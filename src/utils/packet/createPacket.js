@@ -2,7 +2,7 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 import configs from '../../configs/configs.js';
 import { getProtoTypeNameByHandlerId } from '../../handlers/index.js';
 
-const { PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH, PACKET_PAYLOAD_LENGTH, CLIENT_VERSIONS } = configs;
+const { PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH, PACKET_PAYLOAD_LENGTH } = configs;
 
 export const createPacket = (packetType, token = '', data = {}) => {
   const packetTypeBuffer = Buffer.alloc(PACKET_TYPE_LENGTH);
