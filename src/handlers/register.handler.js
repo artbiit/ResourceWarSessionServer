@@ -21,9 +21,6 @@ const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
  */
 export const registerRequestHandler = async ({ payload }) => {
   const { id, password, nickname } = payload;
-  //console.log(id, password,nickname);
-
-  // response data init
   let message = undefined;
   let success = true;
   let signUpResultCode = 0;
@@ -38,7 +35,6 @@ export const registerRequestHandler = async ({ payload }) => {
     }
 
     // 아이디 기반으로 유저 찾기
-    //redis 불러오기
     // 회원가입
     const salt = await bcrypt.genSalt(Number(SECURE_SALT));
     const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, salt);
@@ -58,12 +54,12 @@ export const registerRequestHandler = async ({ payload }) => {
           const result = await postgres.execute(
             `INSERT INTO Account (nickname, user_name, password, create_at, update_at) VALUES ($1, $2, $3, DEFAULT, DEFAULT) RETURNING id`,
             [Account.nickname, Account.id, Account.password],
-            //`SELECT * FROM ACCOUNT`,
           );
           console.log('User inserted with ID:', result);
         }
         else{
           console.log('중복된 아이디 입니다.');
+          signUpResultCode = 1;
         }
       } catch (e) {
         console.error(e);
@@ -72,7 +68,6 @@ export const registerRequestHandler = async ({ payload }) => {
     await insertUser(Account);
 
     message = '회원가입을 완료했습니다.';
-    //logger.info(`회원가입 완료: ${newUser.insertId}`);
   } catch (error) {
     success = false;
     message = '회원가입 과정 중 문제가 발생했습니다..';

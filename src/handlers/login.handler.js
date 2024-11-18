@@ -27,7 +27,7 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   const { id, password } = payload;
 
   // response data init
-  let signInResultCode = SignInResultCode.SUCCESS;
+  let signInResultCode = SignInResultCode.IDPW_INVALID;
   let message = undefined;
   let token = '';
   try {
@@ -40,9 +40,9 @@ export const loginRequestHandler = async ({ socket, payload }) => {
     );
     if (checkUser) {
       token = uuidv4();
+      signInResultCode = SignInResultCode.SUCCESS;
     } else {
       // 비밀번호가 틀렸을 경우
-      signInResultCode = SignInResultCode.IDPW_INVALID;
       message = '아이디 혹은 비밀번호를 확인해주세요.';
     }
   } catch (error) {
@@ -51,14 +51,5 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   }
   let expirationTime = Date.now() + 3600000;
 
-  console.log("로그인 : ",signInResultCode, token, expirationTime);
-  /*
-// 로그인 결과 (토큰 발급)
-message S2CSignInRes {
-uint8 signInResultCode = 1; // 0이면 성공
-string token = 2;
-uint64 expirationTime = 3;  // 만료시간
-}
-*/
   return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
 };
