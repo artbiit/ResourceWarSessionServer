@@ -14,10 +14,7 @@ export const joinRoom = async (gameCode, socket) => {
     // 풀방
     return { joinRoomResultCode: JoinRoomCode.IS_ALREADY_FULL, gameUrl: '' };
   }
-  else if(!lobbyInfo.isPrivate){
-    // private방 일 때
-    return { joinRoomResultCode: JoinRoomCode.PRIVATE_ROOM, gameUrl: '' };
-  }
+
   lobbyInfo.player_count = (Number(lobbyInfo.player_count) + 1).toString();
 
   redis.hset(`GameSession:${gameCode}`, lobbyInfo);
