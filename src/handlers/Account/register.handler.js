@@ -1,13 +1,12 @@
 import logger from '../../utils/logger.js';
 import configs from '../../configs/configs.js';
 import Result from '../result.js';
+import { createUser } from '../../db/Account/register.db.js';
 import bcrypt from 'bcryptjs';
-import { getRedis } from '../../db/redis.js';
-import { postgres } from '../../db/postgresql.js';
-import { registerRequest } from '../../db/Account/register.db.js';
-
+import { isUserNameMatch, isNicknameMatch, isPasswordMatch } from './helper.js';
+import { existsByUserNameAndNickname } from '../../db/Account/account.db.js';
 // 환경 변수에서 설정 불러오기
-const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
+const { PacketType, SECURE_PEPPER, SECURE_SALT, SignUpResultCode } = configs;
 
 /***
  * - 회원가입 요청(request) 함수
@@ -21,8 +20,35 @@ const { PacketType, SECURE_PEPPER, SECURE_SALT } = configs;
  * @returns {void} 별도의 반환 값은 없으며, 성공 여부와 메시지를 클라이언트에게 전송.
  */
 export const registerRequestHandler = async ({ payload }) => {
-  const { id, password, nickname } = payload;
-  const signUpResultCode = registerRequest(id, password, nickname);
+  const { id: userName, password, nickname } = payload;
+  let signUpResultCode = SignUpResultCode.ERROR;
+  if (!isUserNameMatch(userName)) {
+    signUpResultCode = SignUpResultCode.ID_INVALID;
+  } else if (!isPasswordMatch.test(password)) {
+    signUpResultCode = SignUpResultCode.PW_INVALID;
+  } else if (!isNicknameMatch.test(nickname)) {
+    signUpResultCode = SignUpResultCode.NN_INVALID;
+  } else {
+    try {
+      const isExists = await existsByUserNameAndNickname(userName, nickname);
+      if (isExists) {
+        if (isExists.conflict_type == 'user_name') {
+          signUpResultCode = SignUpResultCode.DUPLICATE_USER_NAME;
+        } else if (isExists.conflict_type == 'nickname') {
+          signUpResultCode = SignUpResultCode.DUPLICATE_NICKNAME;
+        }
+      } else {
+        const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, SECURE_SALT);
+        const result = await createUser(userName, hashedPassword, nickname);
+        if (result === null) {
+          signUpResultCode = SignUpResultCode.FAILED_CREATE;
+        }
+      }
+    } catch (error) {
+      signUpResultCode = SignUpResultCode.UNKNOWN_ERROR;
+      logger.error(`registerRequestHandler. : ${error.message}`);
+    }
+  }
 
   return new Result({ signUpResultCode }, PacketType.SIGN_UP_RESPONSE);
 };
