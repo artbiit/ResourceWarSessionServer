@@ -25,17 +25,23 @@ client.sendMessage(PacketType.SIGN_IN_REQUEST, {
   password: '박용현죽어라',
 });
 
-//  client.addHandler(PacketType.CREATE_ROOM_RESPONSE, async (payload) => {
-//    // console.log(payload);
-//  });
-//  client.sendMessage(PacketType.CREATE_ROOM_REQUEST, {
-//    isPrivate : false,
-//  });
+// client.addHandler(PacketType.CREATE_ROOM_RESPONSE, async (payload) => {
+//   // console.log(payload);
+// });
+// client.sendMessage(PacketType.CREATE_ROOM_REQUEST, {
+//   isPrivate: false,
+// });
 
 // client.addHandler(PacketType.JOIN_ROOM_RESPONSE, async (payload) => {
 //   // console.log(payload);
 // });
-
 // client.sendMessage(PacketType.JOIN_ROOM_REQUEST, {
-//   gameCode : "16a92606-2de7-4d14-b12a-2f3cfbf3b2bd",
+//   gameCode : "992518",
 // });
+
+client.addHandler(PacketType.MATCH_RESPONSE, async (payload) => {
+  // console.log(payload);
+});
+client.sendMessage(PacketType.MATCH_REQUEST, {
+  
+});

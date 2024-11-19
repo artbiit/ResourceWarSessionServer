@@ -1,7 +1,7 @@
 import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
-import { createLobbyHandler, joinLobbyHandler } from './Lobby/lobby.handler.js';
+import { createLobbyHandler, joinLobbyHandler, randomLobbyHandler } from './Lobby/lobby.handler.js';
 import { loginRequestHandler } from './Account/login.handler.js';
 import { registerRequestHandler } from './Account/register.handler.js';
 
@@ -47,6 +47,14 @@ const handlers = {
   [PacketType.JOIN_ROOM_RESPONSE]: {
     handler: undefined,
     protoType: 'lobby.S2CJoinRoomRes',
+  },
+  [PacketType.MATCH_REQUEST]: {
+    handler: randomLobbyHandler,
+    protoType: 'lobby.C2SMatchReq',
+  },
+  [PacketType.MATCH_RESPONSE]: {
+    handler: undefined,
+    protoType: 'lobby.S2CMatchRes',
   },
 };
 
