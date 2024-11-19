@@ -1,6 +1,9 @@
 import configs from '../../configs/configs.js';
 import Result from '../result.js';
-import { login } from '../../db/Account/account.db.js';
+import { findUserByUserName } from '../../db/Account/account.db.js';
+import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcryptjs';
+import { addUserSession } from '../../sessions/user.session.js';
 // 환경 변수에서 설정 불러오기
 const { PacketType, SignInResultCode, SECURE_PEPPER, SECURE_SALT } = configs;
 
@@ -21,34 +24,23 @@ const { PacketType, SignInResultCode, SECURE_PEPPER, SECURE_SALT } = configs;
 //4. 토큰 발급
 //5. 결과 반송
 export const loginRequestHandler = async ({ socket, payload }) => {
-  const { id, password } = payload;
-  await login(id, password, socket);
-
-  let signInResultCode = SignInResultCode.IDPW_INVALID;
+  const { id: userName, password } = payload;
+  let signInResultCode = SignInResultCode.SUCCESS;
   let token = '';
-  let expirationTime = undefined;
+  let expirationTime = 0;
 
-  if (checkUser) {
-    token = uuidv4();
-    expirationTime = Date.now() + 3600000;
-    signInResultCode = SignInResultCode.SUCCESS;
-
-    const userInfo = {
-      id,
-      token,
-      expired_time: expirationTime,
-    };
-
-    // redis에 로그인한 유저 정보 저장
-    const redis = await getRedis();
-    redis.hset(`UserSession:${id}`, userInfo);
-    addUserSession(socket, userInfo);
+  const userByDB = await findUserByUserName(userName);
+  if (userByDB) {
+    if (bcrypt.compare(password + SECURE_PEPPER, SECURE_SALT)) {
+      expirationTime = Date.now() + 3600000;
+      token = uuidv4();
+      addUserSession(socket, userByDB.id, userName, token, expirationTime);
+    } else {
+      signInResultCode = SignInResultCode.INVALID_PW;
+    }
+  } else {
+    signInResultCode = SignInResultCode.INVALID_ID;
   }
-  return { signInResultCode, token, expirationTime };
-
-  // 아이디와 비밀번호 기반으로 유저 찾기
-  const salt = await bcrypt.genSalt(Number(SECURE_SALT));
-  const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, salt);
 
   return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
 };

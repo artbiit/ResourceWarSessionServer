@@ -8,6 +8,7 @@ const Account_Qry = Object.freeze({
 FROM Account
 WHERE user_name = $1 OR nickname = $2;`,
   FIND_USER_BY_ID: `SELECT nickname, user_name, password FROM Account WHERE id = ($1);`,
+  FIND_USER_BY_USERNAME: `SELECT id, nickname, password FROM Account WHERE user_name = ($1);`,
   INSERT_USER: `INSERT INTO Account (nickname, user_name, password, create_at, update_at) VALUES ($1, $2, $3, DEFAULT, DEFAULT) RETURNING id`,
 });
 

@@ -1,7 +1,8 @@
 export const SignInResultCode = {
   SUCCESS: 0,
-  IDPW_INVALID: 1,
-  ALREADY_LOGGED_IN: 2,
+  INVALID_ID: 1,
+  INVALID_PW: 2,
+  ALREADY_LOGGED_IN: 3,
 };
 
 export const SignUpResultCode = {

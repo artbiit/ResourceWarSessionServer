@@ -1,5 +1,28 @@
 import { postgres } from '../postgresql.js';
 import Account_Qry from './account.qry.js';
+await postgres.init();
+
+export const findUserByUserName = async (userName) => {
+  let result = await postgres.query(Account_Qry.FIND_USER_BY_USERNAME, [userName]);
+  if (result.rows.length) {
+    result = result.rows[0];
+    result.user_name = userName;
+  } else {
+    result = null;
+  }
+  return result;
+};
+
+export const findUserById = async (id) => {
+  let result = await postgres.query(Account_Qry.FIND_USER_BY_ID, [id]);
+  if (result.rows.length) {
+    result = result.rows[0];
+    result.id = id;
+  } else {
+    result = null;
+  }
+  return result;
+};
 
 /**
  *  이미 존재할 경우 conflict_type이 정의됩니다. 'user_name'은 계정 중복, 'nickname'은 닉네임 중복

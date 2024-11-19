@@ -1,14 +1,19 @@
 import { removeUserQueue } from '../utils/socket/messageQueue.js';
 import { userSessions } from './sessions.js';
 
-export const addUserSession = (socket, userInfo) => {
-  userSessions[socket] = userInfo;
-  console.log(userSessions);
+export const addUserSession = (socket, id, userName, token, expirationTime) => {
+  userSessions[socket.id] = {
+    socket,
+    userInfo: {
+      id,
+      userName,
+      token,
+      expirationTime,
+    },
+  };
 };
 
 export const removeUserSession = (socket) => {
   removeUserQueue(socket);
-  if (userSessions[socket]) {
-    delete userSessions.socket;
-  }
+  delete userSessions[socket.id];
 };

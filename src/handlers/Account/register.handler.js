@@ -1,7 +1,7 @@
 import logger from '../../utils/logger.js';
 import configs from '../../configs/configs.js';
 import Result from '../result.js';
-import { createUser } from '../../db/Account/register.db.js';
+import { createUser } from '../../db/Account/account.db.js';
 import bcrypt from 'bcryptjs';
 import { isUserNameMatch, isNicknameMatch, isPasswordMatch } from './helper.js';
 import { existsByUserNameAndNickname } from '../../db/Account/account.db.js';
