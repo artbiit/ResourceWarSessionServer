@@ -6,3 +6,18 @@
 CREATE INDEX idx_account_id ON Account (id);
 CREATE INDEX idx_user_name ON Account(user_name);
 CREATE INDEX idx_nickname ON Account(nickname);
+
+-- 업데이트 일자 자동 변경을 위한 함수
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 업데이트 일자 자동 변경 트리거
+CREATE TRIGGER set_update_at
+BEFORE UPDATE ON Account
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
