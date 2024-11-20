@@ -1,7 +1,7 @@
 const testEnv = {
-  userName: 'test54321',
+  userName: 'test543212',
   password: 'xptmxmQlalfqjsgh1!',
-  nickname: '테스트용_계정4',
+  nickname: '테스트용_계정5',
   url: 'localhost',
   port: 5555,
 };

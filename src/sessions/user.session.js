@@ -11,12 +11,15 @@ export const addUserSession = async (socket, dbId, userName, token, expirationTi
       expirationTime,
     },
   };
+
   return await cacheUserSession(dbId, token, expirationTime);
 };
 
-export const removeUserSession = (socket) => {
-  removeUserQueue(socket);
-  delete userSessions[socket.id];
+export const removeUserSession = (token) => {
+  if (userSessions[token]) {
+    removeUserQueue(userSessions[token].socket);
+    delete userSessions[token];
+  }
 };
 
 export const getUser = (token) => {

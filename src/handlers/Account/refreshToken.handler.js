@@ -9,59 +9,67 @@ const { RefreshTokenResultCode, PacketType } = configs;
 
 export const refreshTokenHandler = async ({ socket, payload }) => {
   const { token } = payload;
-
   let resultPayload = {
-    resultCode: RefreshTokenResultCode.SUCCESS,
+    refreshTokenResultCode: RefreshTokenResultCode.SUCCESS,
     expirationTime: 0,
     token: '',
   };
 
+  console.log(payload);
   try {
     const userBySession = getUser(token);
 
     if (!userBySession) {
-      resultPayload.resultCode = PacketType.INVALID_TOKEN;
+      resultPayload.refreshTokenResultCode = PacketType.INVALID_TOKEN;
       throw new Error(`${[PacketType.INVALID_TOKEN]}`);
     }
 
     const userName = userBySession.userInfo.userName;
-    const { userByDB, userByRedis } = await Promise.all([
+
+    const [userByDB, userByRedis] = await Promise.all([
       findUserByUserName(userName),
       getUserSession(token),
     ]);
+
+    console.log(userByRedis);
     if (!userByDB) {
-      resultPayload.resultCode = PacketType.UNKNOWN_USERNAME;
+      resultPayload.refreshTokenResultCode = PacketType.UNKNOWN_USERNAME;
       throw new Error(`${[PacketType.UNKNOWN_USERNAME]} : ${userName}`);
     }
 
     if (!userByRedis) {
-      resultPayload.resultCode = PacketType.INVALID_TOKEN;
+      resultPayload.refreshTokenResultCode = PacketType.INVALID_TOKEN;
       throw new Error(`${[PacketType.INVALID_TOKEN]}`);
     }
 
     const now = Date.now();
 
     if (userByRedis.expirationTime < now) {
-      resultPayload.resultCode = PacketType.EXPIRED_TOKEN;
+      resultPayload.refreshTokenResultCode = PacketType.EXPIRED_TOKEN;
       throw new Error(`${[PacketType.EXPIRED_TOKEN]}`);
     }
 
-    if (userByRedis.token != token) {
-      resultPayload.resultCode = PacketType.MISMATCH_TOKEN_USERNAME;
+    if (userByRedis.id != userByDB.id) {
+      resultPayload.refreshTokenResultCode = PacketType.MISMATCH_TOKEN_USERNAME;
       throw new Error(`${[PacketType.MISMATCH_TOKEN_USERNAME]}`);
     }
 
-    const { token, expirationTime } = createNewToken();
+    const { token: newToken, expirationTime: newExpirationTime } = createNewToken();
 
-    await cacheUserSession(userByDB.id, token, expirationTime);
-    addUserSession(socket, userByDB.id, userName, token, expirationTime);
+    resultPayload.token = newToken;
+    resultPayload.expirationTime = newExpirationTime;
+    await cacheUserSession(userByDB.id, newToken, newExpirationTime);
+    addUserSession(socket, userByDB.id, userName, newToken, newExpirationTime);
   } catch (error) {
     resultPayload.expirationTime = 0;
     resultPayload.token = '';
-    if (resultPayload.resultCode == RefreshTokenResultCode.SUCCESS) {
-      resultPayload.resultCode = RefreshTokenResultCode.UNKNOWN_ERROR;
+    if (
+      !resultPayload.refreshTokenResultCode ||
+      resultPayload.refreshTokenResultCode == RefreshTokenResultCode.SUCCESS
+    ) {
+      resultPayload.refreshTokenResultCode = RefreshTokenResultCode.UNKNOWN_ERROR;
     }
-    logger.error(`refreshTokenHandler. ${error.message}`);
+    logger.error(error);
   }
 
   return new Result(resultPayload, PacketType.REFRESH_TOKEN_RESPONSE);

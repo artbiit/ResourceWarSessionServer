@@ -2,6 +2,7 @@ import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { loginRequestHandler } from './Account/login.handler.js';
+import { refreshTokenHandler } from './Account/refreshToken.handler.js';
 import { registerRequestHandler } from './Account/register.handler.js';
 import { createLobbyHandler } from './Lobby/createLobby.handler.js';
 const { PacketType } = configs;
@@ -24,7 +25,7 @@ const handlers = {
     protoType: 'account.S2CSignInRes',
   },
   [PacketType.REFRESH_TOKEN_REQUEST]: {
-    handler: undefined,
+    handler: refreshTokenHandler,
     protoType: 'account.C2SRefreshTokenReq',
   },
   [PacketType.REFRESH_TOKEN_RESPONSE]: {
