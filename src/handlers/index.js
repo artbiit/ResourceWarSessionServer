@@ -3,7 +3,7 @@ import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { loginRequestHandler } from './Account/login.handler.js';
 import { registerRequestHandler } from './Account/register.handler.js';
-
+import { createLobbyHandler } from './Lobby/createLobby.handler.js';
 const { PacketType } = configs;
 
 const handlers = {
@@ -32,7 +32,7 @@ const handlers = {
     protoType: 'account.S2CRefreshTokenRes',
   },
   [PacketType.CREATE_ROOM_REQUEST]: {
-    handler: undefined,
+    handler: createLobbyHandler,
     protoType: 'lobby.C2SCreateRoomReq',
   },
   [PacketType.CREATE_ROOM_RESPONSE]: {
