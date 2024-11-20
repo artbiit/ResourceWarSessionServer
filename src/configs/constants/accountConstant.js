@@ -12,8 +12,8 @@ export const SignUpResultCode = {
   NN_INVALID: 3,
   DUPLICATE_USER_NAME: 5,
   DUPLICATE_NICKNAME: 6,
-  FAILED_CREATE: Number.MAX_SAFE_INTEGER - 1,
-  UNKNOWN_ERROR: Number.MAX_SAFE_INTEGER,
+  FAILED_CREATE: 10000,
+  UNKNOWN_ERROR: 20000,
 };
 
 export const RefreshTokenResultCode = {
@@ -22,5 +22,5 @@ export const RefreshTokenResultCode = {
   INVALID_TOKEN: 2, //잘못된 토큰
   UNKNOWN_USERNAME: 3, //등록된 적 없는 계정임
   MISMATCH_TOKEN_USERNAME: 4, //해당 계정에 발급된 토큰과 같지 않음.
-  UNKNOWN_ERROR: Number.MAX_SAFE_INTEGER, //알 수 없는 문제 발생
+  UNKNOWN_ERROR: 20000, //알 수 없는 문제 발생
 };
