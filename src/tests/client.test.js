@@ -12,6 +12,7 @@ const {
   PACKET_TOKEN_LENGTH,
   PACKET_PAYLOAD_LENGTH,
   CLIENT_VERSIONS,
+  PacketType,
 } = configs;
 
 const connections = [];
@@ -52,6 +53,9 @@ class Client {
       this.client = net.createConnection({ host: this.host, port: this.port }, () => {
         connections.push(this);
         console.log('서버에 연결되었습니다.');
+        this.addHandler(PacketType.MISSING_FIELD, ({ payload }) => {
+          console.error(`${[PacketType.MISSING_FIELD]} => `, payload);
+        });
         resolve();
       });
 

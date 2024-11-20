@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package common;
+
+//해당 패킷에 대해 빠진 페이로드 데이터 갯수를 알립니다.
+message S2CMissingFieldNoti{
+    int32 packetType = 1;
+    int32 missingFieldLength = 2;
+}

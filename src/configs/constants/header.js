@@ -99,6 +99,9 @@ export const PacketType = {
   // 대기실 매칭요청
   MATCH_REQUEST: 54,
   MATCH_RESPONSE: 55,
+
+  //에러
+  MISSING_FIELD: 10000, //요청 파라미터 재점토바람
 };
 
 export const ReversePacketType = Object.fromEntries(

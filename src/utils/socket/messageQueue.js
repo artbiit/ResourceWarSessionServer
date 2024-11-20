@@ -1,8 +1,11 @@
 import { getHandlerById } from '../../handlers/index.js';
+import Result from '../../handlers/result.js';
 import { handleError } from '../error/errorHandler.js';
 import logger from '../logger.js';
 import { createPacket } from '../packet/createPacket.js';
+import configs from '../../configs/configs.js';
 
+const { PacketType } = configs;
 const queueBySocket = {};
 
 export const addUserQueue = (socket) => {
@@ -32,7 +35,6 @@ export const removeUserQueue = (socket) => {
   } else {
     logger.warn(`removeUserQueue. ${id || 'Undefined'} is unknown socket`);
   }
-
 };
 
 const getUserQueue = (socketId) => {
@@ -131,11 +133,18 @@ const processReceiveQueue = async (socketId) => {
       const { packetType, payload } = message;
       let result = null;
       try {
-        const handler = getHandlerById(packetType);
-        if (handler) {
-          result = await handler({ socket, payload });
+        if (payload.missingFieldsLength) {
+          result = new Result(
+            { packetType, missingFieldLength: payload.missingFieldsLength },
+            PacketType.MISSING_FIELD,
+          );
         } else {
-          logger.warn(`processReceiveQueue. Unknown handler Id : ${packetType}`);
+          const handler = getHandlerById(packetType);
+          if (handler) {
+            result = await handler({ socket, payload });
+          } else {
+            logger.warn(`processReceiveQueue. Unknown handler Id : ${packetType}`);
+          }
         }
       } catch (error) {
         result = handleError(packetType, error);

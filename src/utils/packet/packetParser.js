@@ -2,6 +2,7 @@ import { getProtoMessages } from '../../init/loadProtos.js';
 import { getProtoTypeNameByHandlerId } from '../../handlers/index.js';
 import CustomError from '../error/customError.js';
 import configs from '../../configs/configs.js';
+import logger from '../logger.js';
 
 export const packetParser = (packetType, payloadBuffer) => {
   const protoMessages = getProtoMessages();
@@ -18,8 +19,7 @@ export const packetParser = (packetType, payloadBuffer) => {
 
   const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
   if (missingFields.length > 0) {
-    console.log(missingFields);
-    throw new CustomError();
+    payload.missingFieldsLength = missingFields.length;
   }
 
   return payload;
