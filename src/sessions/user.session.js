@@ -2,17 +2,16 @@ import { cacheUserSession } from '../db/Account/account.redis.js';
 import { removeUserQueue } from '../utils/socket/messageQueue.js';
 import { userSessions } from './sessions.js';
 
-export const addUserSession = async (socket, id, userName, token, expirationTime) => {
-  userSessions[socket.id] = {
+export const addUserSession = async (socket, dbId, userName, token, expirationTime) => {
+  userSessions[token] = {
     socket,
     userInfo: {
-      id,
+      id: dbId,
       userName,
-      token,
       expirationTime,
     },
   };
-  return await cacheUserSession(id, token, expirationTime);
+  return await cacheUserSession(dbId, token, expirationTime);
 };
 
 export const removeUserSession = (socket) => {
@@ -20,10 +19,6 @@ export const removeUserSession = (socket) => {
   delete userSessions[socket.id];
 };
 
-export const getUserBySocket = (socket) => {
-  return userSessions[socket.id];
-};
-
-export const getUserBySocketId = (socketId) => {
-  return userSessions[socketId];
+export const getUser = (token) => {
+  return userSessions[token];
 };

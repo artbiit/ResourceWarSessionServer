@@ -1,22 +1,31 @@
 import configs from '../../configs/configs.js';
 import { findUserByUserName } from '../../db/Account/account.db.js';
 import { cacheUserSession, getUserSession } from '../../db/Account/account.redis.js';
-import { addUserSession, getUserBySocket } from '../../sessions/user.session.js';
+import { getUser, addUserSession } from '../../sessions/user.session.js';
 import logger from '../../utils/logger.js';
 import Result from '../result.js';
 import { createNewToken } from './helper.js';
 const { RefreshTokenResultCode, PacketType } = configs;
 
 export const refreshTokenHandler = async ({ socket, payload }) => {
-  const { token, id: userName } = payload;
+  const { token } = payload;
 
   let resultPayload = {
     resultCode: RefreshTokenResultCode.SUCCESS,
     expirationTime: 0,
     token: '',
   };
+
   try {
-    const { userByDB, userBySession } = await Promise.all([
+    const userBySession = getUser(token);
+
+    if (!userBySession) {
+      resultPayload.resultCode = PacketType.INVALID_TOKEN;
+      throw new Error(`${[PacketType.INVALID_TOKEN]}`);
+    }
+
+    const userName = userBySession.userInfo.userName;
+    const { userByDB, userByRedis } = await Promise.all([
       findUserByUserName(userName),
       getUserSession(token),
     ]);
@@ -25,19 +34,19 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
       throw new Error(`${[PacketType.UNKNOWN_USERNAME]} : ${userName}`);
     }
 
-    if (!userBySession) {
+    if (!userByRedis) {
       resultPayload.resultCode = PacketType.INVALID_TOKEN;
       throw new Error(`${[PacketType.INVALID_TOKEN]}`);
     }
 
     const now = Date.now();
 
-    if (userBySession.expirationTime < now) {
+    if (userByRedis.expirationTime < now) {
       resultPayload.resultCode = PacketType.EXPIRED_TOKEN;
       throw new Error(`${[PacketType.EXPIRED_TOKEN]}`);
     }
 
-    if (userBySession.token != token) {
+    if (userByRedis.token != token) {
       resultPayload.resultCode = PacketType.MISMATCH_TOKEN_USERNAME;
       throw new Error(`${[PacketType.MISMATCH_TOKEN_USERNAME]}`);
     }

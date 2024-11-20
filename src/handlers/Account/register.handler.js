@@ -39,7 +39,7 @@ export const registerRequestHandler = async ({ payload }) => {
           signUpResultCode = SignUpResultCode.DUPLICATE_NICKNAME;
         }
       } else {
-        const hashedPassword = await bcrypt.hash(password + SECURE_PEPPER, SECURE_SALT);
+        const hashedPassword = await bcrypt.hash(`${password}${SECURE_PEPPER}`, SECURE_SALT);
         const result = await createUser(userName, hashedPassword, nickname);
         if (result === null) {
           signUpResultCode = SignUpResultCode.FAILED_CREATE;

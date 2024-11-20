@@ -28,8 +28,6 @@ message S2CSignInRes {
 }
 
 message C2SRefreshTokenReq {
-    string token = 1;
-    string id = 2;
 }
   
   // 토큰 재발급 결과
