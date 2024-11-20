@@ -78,7 +78,8 @@ class Client {
     if (!this.client) {
       throw new Error('서버에 연결되어 있지 않습니다.');
     }
-    const wrappedPacket = createPacket(packetType, '', data);
+    console.log(this.token);
+    const wrappedPacket = createPacket(packetType, this.token, data);
     this.client.write(wrappedPacket);
   };
 
@@ -128,7 +129,7 @@ class Client {
  * 같은 연결의 클라이언트가 있으면 반환합니다. 없으면 생성합니다. connect() 는 직접 호출해야 합니다.
  */
 export const getOrCreateClient = (host, port) => {
-  let conn = connections.find((conn) => conn.host === host && conn.port === port);
+  let conn = connections.find((conn) => conn.host == host && conn.port == port);
   if (!conn) {
     conn = new Client(host, port);
   }
