@@ -1,7 +1,6 @@
 import configs from '../configs/configs.js';
 import CustomError from '../utils/error/customError.js';
 import { ErrorCodes } from '../utils/error/errorCodes.js';
-import { createLobbyHandler, joinLobbyHandler, randomLobbyHandler } from './Lobby/lobby.handler.js';
 import { loginRequestHandler } from './Account/login.handler.js';
 import { registerRequestHandler } from './Account/register.handler.js';
 
@@ -33,7 +32,7 @@ const handlers = {
     protoType: 'account.S2CRefreshTokenRes',
   },
   [PacketType.CREATE_ROOM_REQUEST]: {
-    handler: createLobbyHandler,
+    handler: undefined,
     protoType: 'lobby.C2SCreateRoomReq',
   },
   [PacketType.CREATE_ROOM_RESPONSE]: {
@@ -41,7 +40,7 @@ const handlers = {
     protoType: 'lobby.S2CCreateRoomRes',
   },
   [PacketType.JOIN_ROOM_REQUEST]: {
-    handler: joinLobbyHandler,
+    handler: undefined,
     protoType: 'lobby.C2SJoinRoomReq',
   },
   [PacketType.JOIN_ROOM_RESPONSE]: {
@@ -49,7 +48,7 @@ const handlers = {
     protoType: 'lobby.S2CJoinRoomRes',
   },
   [PacketType.MATCH_REQUEST]: {
-    handler: randomLobbyHandler,
+    handler: undefined,
     protoType: 'lobby.C2SMatchReq',
   },
   [PacketType.MATCH_RESPONSE]: {
