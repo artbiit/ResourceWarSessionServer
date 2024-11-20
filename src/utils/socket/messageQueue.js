@@ -133,7 +133,7 @@ const processReceiveQueue = async (socketId) => {
       const { packetType, payload } = message;
       let result = null;
       try {
-        if (payload.missingFieldsLength) {
+        if (payload.missingFieldsLength > 0) {
           result = new Result(
             { packetType, missingFieldLength: payload.missingFieldsLength },
             PacketType.MISSING_FIELD,
@@ -150,6 +150,7 @@ const processReceiveQueue = async (socketId) => {
         result = handleError(packetType, error);
       } finally {
         if (result) {
+          console.log(result);
           const response = createPacket(result.responseType, '', result.payload);
           enqueueSend(socketId, response);
         }
