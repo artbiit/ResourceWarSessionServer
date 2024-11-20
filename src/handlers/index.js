@@ -55,6 +55,10 @@ const handlers = {
     handler: undefined,
     protoType: 'lobby.S2CMatchRes',
   },
+  [PacketType.MISSING_FIELD]: {
+    handler: undefined,
+    protoType: 'common.S2CMissingFieldNoti',
+  },
 };
 
 export const getHandlerById = (handlerId) => {
