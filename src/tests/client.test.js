@@ -89,7 +89,7 @@ class Client {
       const packetType = this.buffer.readUintBE(0, PACKET_TYPE_LENGTH);
       const tokenLength = this.buffer.readUintBE(PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH);
       let offset = PACKET_TYPE_LENGTH + PACKET_TOKEN_LENGTH;
-      const version = this.buffer.subarray(offset, offset + tokenLength).toString();
+      const token = this.buffer.subarray(offset, offset + tokenLength).toString();
       offset += tokenLength;
       const payloadLength = this.buffer.readUintBE(offset, PACKET_PAYLOAD_LENGTH);
       offset += PACKET_PAYLOAD_LENGTH;
@@ -102,7 +102,7 @@ class Client {
         const payload = packetParser(packetType, payloadData);
         const handler = this.#handlers[packetType];
 
-        console.log(`수신[packetType:${packetType}]|[version:${version}]|\n`, payload);
+        console.log(`수신[packetType:${packetType}]\n`, payload);
 
         if (handler) {
           await handler({ payload });
