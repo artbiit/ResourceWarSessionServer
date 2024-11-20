@@ -1,9 +1,7 @@
-//import { removeUser } from '../session/user.session.js';
-
-import { removeUserSession } from '../sessions/user.session.js';
 import logger from '../utils/logger.js';
+import { removeUserQueue } from '../utils/socket/messageQueue.js';
 
 export const onError = (socket) => (err) => {
-  removeUserSession(socket);
+  removeUserQueue(socket);
   logger.error(`소켓 오류: ${socket?.id}\n`, err);
 };
