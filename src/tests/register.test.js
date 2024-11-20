@@ -12,7 +12,7 @@ client.addHandler(PacketType.SIGN_UP_RESPONSE, async (payload) => {
 });
 
 client.sendMessage(PacketType.SIGN_UP_REQUEST, {
-  id: testEnv.id,
+  id: testEnv.userName,
   password: testEnv.password,
   nickname: testEnv.nickname,
 });

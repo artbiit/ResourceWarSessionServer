@@ -10,7 +10,8 @@ await client.connect();
 client.addHandler(PacketType.SIGN_IN_RESPONSE, async (payload) => {
   // console.log(payload);
 });
+
 client.sendMessage(PacketType.SIGN_IN_REQUEST, {
-  id: testEnv.id,
+  id: testEnv.userName,
   password: testEnv.password,
 });
