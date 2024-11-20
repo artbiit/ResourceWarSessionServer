@@ -4,8 +4,9 @@ import { findUserByUserName } from '../../db/Account/account.db.js';
 import bcrypt from 'bcryptjs';
 import { addUserSession } from '../../sessions/user.session.js';
 import { createNewToken } from './helper.js';
+import logger from '../../utils/logger.js';
 // 환경 변수에서 설정 불러오기
-const { PacketType, SignInResultCode, SECURE_PEPPER, SECURE_SALT } = configs;
+const { PacketType, SignInResultCode, SECURE_PEPPER } = configs;
 
 /***
  * - 로그인 요청(request) 함수
@@ -29,17 +30,23 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   let token = '';
   let expirationTime = 0;
 
-  const userByDB = await findUserByUserName(userName);
-  if (userByDB) {
-    if (bcrypt.compare(password + SECURE_PEPPER, SECURE_SALT)) {
-      const { token, expirationTime } = createNewToken();
-      addUserSession(socket, userByDB.id, userName, token, expirationTime);
+  try {
+    const userByDB = await findUserByUserName(userName);
+    if (userByDB) {
+      if (await bcrypt.compare(`${password}${SECURE_PEPPER}`, userByDB.password)) {
+        const { token: newToken, expirationTime: newExpirationTime } = createNewToken();
+        token = newToken;
+        expirationTime = newExpirationTime;
+        addUserSession(socket, userByDB.id, userName, newToken, newExpirationTime);
+      } else {
+        signInResultCode = SignInResultCode.INVALID_PW;
+      }
     } else {
-      signInResultCode = SignInResultCode.INVALID_PW;
+      signInResultCode = SignInResultCode.INVALID_ID;
     }
-  } else {
-    signInResultCode = SignInResultCode.INVALID_ID;
+  } catch (error) {
+    logger.error(`loginRequestHandler. ${error.message}`);
+    signInResultCode = SignInResultCode.UNKNOWN_ERROR;
   }
-
   return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
 };

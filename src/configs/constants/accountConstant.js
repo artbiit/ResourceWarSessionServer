@@ -3,6 +3,7 @@ export const SignInResultCode = {
   INVALID_ID: 1,
   INVALID_PW: 2,
   ALREADY_LOGGED_IN: 3,
+  UNKNOWN_ERROR: 20000,
 };
 
 export const SignUpResultCode = {
