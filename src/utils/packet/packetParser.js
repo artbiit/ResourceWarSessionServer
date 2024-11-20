@@ -19,6 +19,9 @@ export const packetParser = (packetType, payloadBuffer) => {
 
   const missingFields = expectedFields.filter((field) => !actualFields.includes(field));
   if (missingFields.length > 0) {
+    logger.info(
+      `packetParser[${packetType}]. missingFields[${missingFields.length}] => ${missingFields.join(',')}`,
+    );
     payload.missingFieldsLength = missingFields.length;
   }
 
