@@ -21,20 +21,21 @@ const { PacketType, SECURE_PEPPER, SECURE_SALT, SignUpResultCode } = configs;
  */
 export const registerRequestHandler = async ({ payload }) => {
   const { id: userName, password, nickname } = payload;
-  let signUpResultCode = SignUpResultCode.ERROR;
+  let signUpResultCode = SignUpResultCode.UNKNOWN_ERROR;
   if (!isUserNameMatch(userName)) {
     signUpResultCode = SignUpResultCode.ID_INVALID;
-  } else if (!isPasswordMatch.test(password)) {
+  } else if (!isPasswordMatch(password)) {
     signUpResultCode = SignUpResultCode.PW_INVALID;
-  } else if (!isNicknameMatch.test(nickname)) {
+  } else if (!isNicknameMatch(nickname)) {
     signUpResultCode = SignUpResultCode.NN_INVALID;
   } else {
     try {
       const isExists = await existsByUserNameAndNickname(userName, nickname);
+
       if (isExists) {
-        if (isExists.conflict_type == 'user_name') {
+        if (isExists == 'user_name') {
           signUpResultCode = SignUpResultCode.DUPLICATE_USER_NAME;
-        } else if (isExists.conflict_type == 'nickname') {
+        } else if (isExists == 'nickname') {
           signUpResultCode = SignUpResultCode.DUPLICATE_NICKNAME;
         }
       } else {
