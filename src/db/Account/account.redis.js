@@ -1,15 +1,21 @@
 import { getRedis } from '../redis.js';
 const USER_SESSION_KEY = 'UserSession';
 
-export const cacheUserToken = async (id, token, expirationTime) => {
-  const redis = await getRedis();
-  return await redis.hset(`${USER_SESSION_KEY}:${id}`, {
-    token,
+const redis = await getRedis();
+export const cacheUserSession = async (dbId, token, expirationTime) => {
+  return await redis.hset(`${USER_SESSION_KEY}:${token}`, {
+    id: dbId,
     expirationTime,
   });
 };
 
-export const unlinkUserToken = async (id) => {
+export const unlinkUserSession = async (token) => {
   const redis = await getRedis();
-  return await redis.unlink(`${USER_SESSION_KEY}:${id}`);
+  return await redis.unlink(`${USER_SESSION_KEY}:${token}`);
+};
+
+export const getUserSession = async (token) => {
+  const redis = await getRedis();
+  const result = await redis.hgetall(`${USER_SESSION_KEY}:${token}`);
+  return Object.keys(result).length === 0 ? null : result;
 };

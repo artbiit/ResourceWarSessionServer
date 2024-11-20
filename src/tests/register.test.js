@@ -1,10 +1,10 @@
 import Client from './client.test.js';
 import { getOrCreateClient } from './client.test.js';
 import configs from '../configs/configs.js';
-
+import testEnv from './env.test.js';
 const { PacketType } = configs;
 
-const client = getOrCreateClient('localhost', 5555);
+const client = getOrCreateClient(testEnv.url, testEnv.port);
 await client.connect();
 
 client.addHandler(PacketType.SIGN_UP_RESPONSE, async (payload) => {
@@ -12,7 +12,7 @@ client.addHandler(PacketType.SIGN_UP_RESPONSE, async (payload) => {
 });
 
 client.sendMessage(PacketType.SIGN_UP_REQUEST, {
-  id: '실험용 아이디',
-  password: '박용현죽어라',
-  nickname: '문민철게으름',
+  id: testEnv.id,
+  password: testEnv.password,
+  nickname: testEnv.nickname,
 });

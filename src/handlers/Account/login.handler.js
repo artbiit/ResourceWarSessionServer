@@ -1,9 +1,9 @@
 import configs from '../../configs/configs.js';
 import Result from '../result.js';
 import { findUserByUserName } from '../../db/Account/account.db.js';
-import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import { addUserSession } from '../../sessions/user.session.js';
+import { createNewToken } from './helper.js';
 // 환경 변수에서 설정 불러오기
 const { PacketType, SignInResultCode, SECURE_PEPPER, SECURE_SALT } = configs;
 
@@ -32,8 +32,7 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   const userByDB = await findUserByUserName(userName);
   if (userByDB) {
     if (bcrypt.compare(password + SECURE_PEPPER, SECURE_SALT)) {
-      expirationTime = Date.now() + 3600000;
-      token = uuidv4();
+      const { token, expirationTime } = createNewToken();
       addUserSession(socket, userByDB.id, userName, token, expirationTime);
     } else {
       signInResultCode = SignInResultCode.INVALID_PW;
