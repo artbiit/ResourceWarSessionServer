@@ -1,6 +1,5 @@
 import { postgres } from '../postgresql.js';
 import Account_Qry from './account.qry.js';
-await postgres.init();
 
 export const findUserByUserName = async (userName) => {
   let result = await postgres.query(Account_Qry.FIND_USER_BY_USERNAME, [userName]);
