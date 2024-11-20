@@ -21,7 +21,7 @@ const { PacketType, SECURE_PEPPER, SECURE_SALT, SignUpResultCode } = configs;
  */
 export const registerRequestHandler = async ({ payload }) => {
   const { id: userName, password, nickname } = payload;
-  let signUpResultCode = SignUpResultCode.UNKNOWN_ERROR;
+  let signUpResultCode = SignUpResultCode.SUCCESS;
   if (!isUserNameMatch(userName)) {
     signUpResultCode = SignUpResultCode.ID_INVALID;
   } else if (!isPasswordMatch(password)) {
