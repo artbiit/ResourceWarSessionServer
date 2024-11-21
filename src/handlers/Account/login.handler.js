@@ -2,8 +2,8 @@ import configs from '../../configs/configs.js';
 import Result from '../result.js';
 import { findUserByUserName } from '../../db/Account/account.db.js';
 import bcrypt from 'bcryptjs';
-import { addUserSession } from '../../sessions/user.session.js';
-import { createNewToken } from './helper.js';
+import { addUserSession, getUserByDBid } from '../../sessions/user.session.js';
+import { createNewToken, isExpired } from './helper.js';
 import logger from '../../utils/logger.js';
 // 환경 변수에서 설정 불러오기
 const { PacketType, SignInResultCode, SECURE_PEPPER } = configs;
@@ -29,11 +29,14 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   let signInResultCode = SignInResultCode.SUCCESS;
   let token = '';
   let expirationTime = 0;
-
+  ``;
   try {
     const userByDB = await findUserByUserName(userName);
     if (userByDB) {
-      if (await bcrypt.compare(`${password}${SECURE_PEPPER}`, userByDB.password)) {
+      const userBySession = getUserByDBid(userByDB.id);
+      if (userBySession && !isExpired(userBySession.expirationTime)) {
+        signInResultCode = SignInResultCode.ALREADY_LOGGED_IN;
+      } else if (await bcrypt.compare(`${password}${SECURE_PEPPER}`, userByDB.password)) {
         const { token: newToken, expirationTime: newExpirationTime } = createNewToken();
         token = newToken;
         expirationTime = newExpirationTime;

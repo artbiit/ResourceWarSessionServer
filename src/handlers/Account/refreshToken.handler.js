@@ -1,10 +1,10 @@
 import configs from '../../configs/configs.js';
 import { findUserByUserName } from '../../db/Account/account.db.js';
 import { cacheUserSession, getUserSession } from '../../db/Account/account.redis.js';
-import { getUser, addUserSession } from '../../sessions/user.session.js';
+import { getUserByToken, addUserSession } from '../../sessions/user.session.js';
 import logger from '../../utils/logger.js';
 import Result from '../result.js';
-import { createNewToken } from './helper.js';
+import { createNewToken, isExpired } from './helper.js';
 const { RefreshTokenResultCode, PacketType } = configs;
 
 export const refreshTokenHandler = async ({ socket, payload }) => {
@@ -15,7 +15,7 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
     token: '',
   };
   try {
-    const userBySession = getUser(token);
+    const userBySession = getUserByToken(token);
 
     if (!userBySession) {
       resultPayload.refreshTokenResultCode = PacketType.INVALID_TOKEN;
@@ -39,9 +39,7 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
       throw new Error(`${[PacketType.INVALID_TOKEN]}`);
     }
 
-    const now = Date.now();
-
-    if (userByRedis.expirationTime < now) {
+    if (isExpired(token)) {
       resultPayload.refreshTokenResultCode = PacketType.EXPIRED_TOKEN;
       throw new Error(`${[PacketType.EXPIRED_TOKEN]}`);
     }

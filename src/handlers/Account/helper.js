@@ -20,3 +20,8 @@ export const isNicknameMatch = (nickname) => {
 export const createNewToken = () => {
   return { token: uuidv4(), expirationTime: Date.now() + 3600000 };
 };
+
+/** 토큰이 만료되었는지 검사 */
+export const isExpired = (expirationTime) => {
+  return expirationTime < Date.now();
+};
