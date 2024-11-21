@@ -24,22 +24,20 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
 
     const userName = userBySession.userInfo.userName;
 
-    const [userByDB, userByRedis] = await Promise.all([
-      findUserByUserName(userName),
-      getUserSession(token),
-    ]);
+    const userByDB = await findUserByUserName(userName);
 
     if (!userByDB) {
       resultPayload.refreshTokenResultCode = PacketType.UNKNOWN_USERNAME;
       throw new Error(`${[PacketType.UNKNOWN_USERNAME]} : ${userName}`);
     }
 
+    const userByRedis = await getUserSession(userByDB.id);
     if (!userByRedis) {
       resultPayload.refreshTokenResultCode = PacketType.INVALID_TOKEN;
       throw new Error(`${[PacketType.INVALID_TOKEN]}`);
     }
 
-    if (isExpired(token)) {
+    if (isExpired(Number(userByRedis.expirationTime))) {
       resultPayload.refreshTokenResultCode = PacketType.EXPIRED_TOKEN;
       throw new Error(`${[PacketType.EXPIRED_TOKEN]}`);
     }

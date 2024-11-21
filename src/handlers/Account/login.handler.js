@@ -29,7 +29,7 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   let signInResultCode = SignInResultCode.SUCCESS;
   let token = '';
   let expirationTime = 0;
-  ``;
+
   try {
     const userByDB = await findUserByUserName(userName);
     if (userByDB) {
