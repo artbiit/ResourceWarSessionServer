@@ -32,6 +32,10 @@ export const onData = (socket) => async (data) => {
     }
   } catch (error) {
     socket.buffer = Buffer.alloc(0);
+    socket.errorCount++;
+    if (socket.errorCount >= 3) {
+      socket.destroy();
+    }
     logger.error(error);
   }
 };

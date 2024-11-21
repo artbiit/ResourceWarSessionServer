@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const onConnection = (socket) => {
   socket.id = uuidv4();
   logger.info(`클라이언트가 연결되었습니다: ${socket.id}`);
-
+  socket.errorCount = 0;
   socket.buffer = Buffer.alloc(0);
 
   addUserQueue(socket);
