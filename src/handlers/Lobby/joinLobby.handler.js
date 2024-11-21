@@ -14,7 +14,7 @@ export const joinLobbyHandler = async ({ payload }) => {
     if (gameSession) {
       if (gameSession.state <= GameSessionState.DESTROY) {
         joinLobbyResultCode = JoinLobbyResultCode.NOT_EXIST;
-      } else if (gameSession.maxPlayer <= gameSession.currentPlayer) {
+      } else if (gameSession.maxPlayer <= gameSession.currentPlayer + gameSession.previous) {
         joinLobbyResultCode = JoinLobbyResultCode.IS_FULL;
       } else {
         gameUrl = gameSession.gameUrl;
