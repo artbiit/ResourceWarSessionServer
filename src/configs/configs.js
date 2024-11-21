@@ -8,8 +8,11 @@ import {
   PacketType,
 } from './constants/header.js';
 import accountConstants from './constants/accountConstant.js';
-
+import lobbyConstant from './constants/lobbyConstant.js';
+import gameSession from './constants/gameSession.js';
 const configs = {
+  ...gameSession,
+  ...lobbyConstant,
   ...accountConstants,
   ...CONSTANTS,
   ...REDIS_CONFIGS,

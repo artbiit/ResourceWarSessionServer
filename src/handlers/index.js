@@ -6,6 +6,7 @@ import { refreshTokenHandler } from './Account/refreshToken.handler.js';
 import { registerRequestHandler } from './Account/register.handler.js';
 import { signOutHandler } from './Account/signout.handler.js';
 import { createLobbyHandler } from './Lobby/createLobby.handler.js';
+import { joinLobbyHandler } from './Lobby/joinLobby.handler.js';
 const { PacketType } = configs;
 
 const handlers = {
@@ -50,7 +51,7 @@ const handlers = {
     protoType: 'lobby.S2CCreateRoomRes',
   },
   [PacketType.JOIN_ROOM_REQUEST]: {
-    handler: undefined,
+    handler: joinLobbyHandler,
     protoType: 'lobby.C2SJoinRoomReq',
   },
   [PacketType.JOIN_ROOM_RESPONSE]: {
