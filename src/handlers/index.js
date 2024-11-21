@@ -7,6 +7,8 @@ import { registerRequestHandler } from './Account/register.handler.js';
 import { signOutHandler } from './Account/signout.handler.js';
 import { createLobbyHandler } from './Lobby/createLobby.handler.js';
 import { joinLobbyHandler } from './Lobby/joinLobby.handler.js';
+import { matchCancelHandler } from './Lobby/matchCancel.hander.js';
+import { matchLobbyHandler } from './Lobby/matchLobby.handler.js';
 const { PacketType } = configs;
 const handlers = {
   [PacketType.GAME_STATE]: {
@@ -78,7 +80,7 @@ const handlers = {
     protoType: 'protocol.S2CCreateRoomRes',
   },
   [PacketType.MATCH_START_REQUEST]: {
-    handler: undefined,
+    handler: matchLobbyHandler,
     protoType: 'protocol.C2SMatchStartReq',
   },
   [PacketType.MATCH_START_RESPONSE]: {
@@ -86,7 +88,7 @@ const handlers = {
     protoType: 'protocol.S2CMatchStartRes',
   },
   [PacketType.MATCH_CANCEL_REQUEST]: {
-    handler: undefined,
+    handler: matchCancelHandler,
     protoType: 'protocol.C2SMatchCancelReq',
   },
   [PacketType.MATCH_CANCEL_RESPONSE]: {
