@@ -4,6 +4,7 @@ import { ErrorCodes } from '../utils/error/errorCodes.js';
 import { loginRequestHandler } from './Account/login.handler.js';
 import { refreshTokenHandler } from './Account/refreshToken.handler.js';
 import { registerRequestHandler } from './Account/register.handler.js';
+import { signOutHandler } from './Account/signout.handler.js';
 import { createLobbyHandler } from './Lobby/createLobby.handler.js';
 const { PacketType } = configs;
 
@@ -23,6 +24,14 @@ const handlers = {
   [PacketType.SIGN_IN_RESPONSE]: {
     handler: undefined,
     protoType: 'account.S2CSignInRes',
+  },
+  [PacketType.SIGN_OUT_REQUEST]: {
+    handler: signOutHandler,
+    protoType: 'account.C2SSignOutReq',
+  },
+  [PacketType.SIGN_OUT_RESPONSE]: {
+    handler: undefined,
+    protoType: 'account.S2CSignOutRes',
   },
   [PacketType.REFRESH_TOKEN_REQUEST]: {
     handler: refreshTokenHandler,

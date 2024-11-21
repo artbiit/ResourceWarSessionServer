@@ -37,3 +37,10 @@ message S2CRefreshTokenRes {
     uint32 refreshTokenResultCode = 3; // 0이면 성공
 }
 
+message C2SSignOutReq{
+
+}
+
+message S2CSignOutRes{
+    uint32 signOutResultCode = 1;
+}

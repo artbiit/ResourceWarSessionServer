@@ -12,11 +12,15 @@ export const PacketType = {
   FIELD_UNIT: 6,
   POSITION: 7,
 
-  // 회원가입 및 로그인
+  // 회원가입
   SIGN_UP_REQUEST: 8,
   SIGN_UP_RESPONSE: 9,
+  //로그인
   SIGN_IN_REQUEST: 10,
   SIGN_IN_RESPONSE: 11,
+  //로그아웃
+  SIGN_OUT_REQUEST: 56,
+  SIGN_OUT_RESPONSE: 57,
 
   // 토큰 재발급
   REFRESH_TOKEN_REQUEST: 12,

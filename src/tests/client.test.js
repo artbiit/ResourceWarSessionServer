@@ -74,13 +74,13 @@ class Client {
     });
   };
 
-  sendMessage = (packetType, data) => {
+  sendMessage = async (packetType, data) => {
     if (!this.client) {
       throw new Error('서버에 연결되어 있지 않습니다.');
     }
-    console.log(this.token);
+    console.log(`Client Send : [${packetType}] `, data);
     const wrappedPacket = createPacket(packetType, this.token, data);
-    this.client.write(wrappedPacket);
+    await this.client.write(wrappedPacket);
   };
 
   #onData = async (data) => {

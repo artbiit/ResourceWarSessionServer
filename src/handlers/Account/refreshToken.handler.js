@@ -31,20 +31,20 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
       throw new Error(`${[PacketType.UNKNOWN_USERNAME]} : ${userName}`);
     }
 
-    const userByRedis = await getUserSession(userByDB.id);
+    const userByRedis = await getUserSession(token);
     if (!userByRedis) {
       resultPayload.refreshTokenResultCode = PacketType.INVALID_TOKEN;
       throw new Error(`${[PacketType.INVALID_TOKEN]}`);
     }
 
-    if (isExpired(Number(userByRedis.expirationTime))) {
-      resultPayload.refreshTokenResultCode = PacketType.EXPIRED_TOKEN;
-      throw new Error(`${[PacketType.EXPIRED_TOKEN]}`);
-    }
-
     if (userByRedis.id != userByDB.id) {
       resultPayload.refreshTokenResultCode = PacketType.MISMATCH_TOKEN_USERNAME;
       throw new Error(`${[PacketType.MISMATCH_TOKEN_USERNAME]}`);
+    }
+
+    if (isExpired(Number(userByRedis.expirationTime))) {
+      resultPayload.refreshTokenResultCode = PacketType.EXPIRED_TOKEN;
+      throw new Error(`${[PacketType.EXPIRED_TOKEN]}`);
     }
 
     const { token: newToken, expirationTime: newExpirationTime } = createNewToken();

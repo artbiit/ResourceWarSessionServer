@@ -20,8 +20,8 @@ export const addUserSession = async (socket, dbId, userName, token, expirationTi
 export const removeUserSession = (token) => {
   if (userSessions[token]) {
     removeUserQueue(userSessions[token].socket);
-    delete userSessions[token];
     delete userSessions[userSessions[token].id];
+    delete userSessions[token];
   }
 };
 
