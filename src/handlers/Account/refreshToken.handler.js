@@ -14,8 +14,6 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
     expirationTime: 0,
     token: '',
   };
-
-  console.log(payload);
   try {
     const userBySession = getUser(token);
 
@@ -31,7 +29,6 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
       getUserSession(token),
     ]);
 
-    console.log(userByRedis);
     if (!userByDB) {
       resultPayload.refreshTokenResultCode = PacketType.UNKNOWN_USERNAME;
       throw new Error(`${[PacketType.UNKNOWN_USERNAME]} : ${userName}`);
