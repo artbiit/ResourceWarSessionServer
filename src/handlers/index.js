@@ -8,67 +8,242 @@ import { signOutHandler } from './Account/signout.handler.js';
 import { createLobbyHandler } from './Lobby/createLobby.handler.js';
 import { joinLobbyHandler } from './Lobby/joinLobby.handler.js';
 const { PacketType } = configs;
-
 const handlers = {
+  [PacketType.GAME_STATE]: {
+    handler: undefined,
+    protoType: 'protocol.GameState',
+  },
+  [PacketType.ITEM_DATA]: {
+    handler: undefined,
+    protoType: 'protocol.ItemData',
+  },
+  [PacketType.PLAYER_ROOM_INFO]: {
+    handler: undefined,
+    protoType: 'protocol.PlayerRoomInfo',
+  },
+  [PacketType.PLAYER_INITIAL_DATA]: {
+    handler: undefined,
+    protoType: 'protocol.PlayerInitialData',
+  },
+  [PacketType.PLAYER_STATE]: {
+    handler: undefined,
+    protoType: 'protocol.PlayerState',
+  },
+  [PacketType.FIELD_UNIT]: {
+    handler: undefined,
+    protoType: 'protocol.FieldUnit',
+  },
+  [PacketType.POSITION]: {
+    handler: undefined,
+    protoType: 'protocol.Position',
+  },
   [PacketType.SIGN_UP_REQUEST]: {
     handler: registerRequestHandler,
-    protoType: 'account.C2SSignUpReq',
+    protoType: 'protocol.C2SSignUpReq',
   },
   [PacketType.SIGN_UP_RESPONSE]: {
     handler: undefined,
-    protoType: 'account.S2CSignUpRes',
+    protoType: 'protocol.S2CSignUpRes',
   },
   [PacketType.SIGN_IN_REQUEST]: {
     handler: loginRequestHandler,
-    protoType: 'account.C2SSignInReq',
+    protoType: 'protocol.C2SSignInReq',
   },
   [PacketType.SIGN_IN_RESPONSE]: {
     handler: undefined,
-    protoType: 'account.S2CSignInRes',
+    protoType: 'protocol.S2CSignInRes',
   },
   [PacketType.SIGN_OUT_REQUEST]: {
     handler: signOutHandler,
-    protoType: 'account.C2SSignOutReq',
+    protoType: 'protocol.C2SSignOutReq',
   },
   [PacketType.SIGN_OUT_RESPONSE]: {
     handler: undefined,
-    protoType: 'account.S2CSignOutRes',
+    protoType: 'protocol.S2CSignOutRes',
   },
   [PacketType.REFRESH_TOKEN_REQUEST]: {
     handler: refreshTokenHandler,
-    protoType: 'account.C2SRefreshTokenReq',
+    protoType: 'protocol.C2SRefreshTokenReq',
   },
   [PacketType.REFRESH_TOKEN_RESPONSE]: {
     handler: undefined,
-    protoType: 'account.S2CRefreshTokenRes',
+    protoType: 'protocol.S2CRefreshTokenRes',
   },
   [PacketType.CREATE_ROOM_REQUEST]: {
     handler: createLobbyHandler,
-    protoType: 'lobby.C2SCreateRoomReq',
+    protoType: 'protocol.C2SCreateRoomReq',
   },
   [PacketType.CREATE_ROOM_RESPONSE]: {
     handler: undefined,
-    protoType: 'lobby.S2CCreateRoomRes',
+    protoType: 'protocol.S2CCreateRoomRes',
+  },
+  [PacketType.MATCH_START_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SMatchStartReq',
+  },
+  [PacketType.MATCH_START_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CMatchStartRes',
+  },
+  [PacketType.MATCH_CANCEL_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SMatchCancelReq',
+  },
+  [PacketType.MATCH_CANCEL_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CMatchCancelRes',
+  },
+  [PacketType.MATCH_PROGRESS_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CMatchProgressNoti',
   },
   [PacketType.JOIN_ROOM_REQUEST]: {
     handler: joinLobbyHandler,
-    protoType: 'lobby.C2SJoinRoomReq',
+    protoType: 'protocol.C2SJoinRoomReq',
   },
   [PacketType.JOIN_ROOM_RESPONSE]: {
     handler: undefined,
-    protoType: 'lobby.S2CJoinRoomRes',
+    protoType: 'protocol.S2CJoinRoomRes',
   },
-  [PacketType.MATCH_REQUEST]: {
+  [PacketType.QUIT_ROOM_REQUEST]: {
     handler: undefined,
-    protoType: 'lobby.C2SMatchReq',
+    protoType: 'protocol.C2SQuitRoomReq',
   },
-  [PacketType.MATCH_RESPONSE]: {
+  [PacketType.QUIT_ROOM_NOTIFICATION]: {
     handler: undefined,
-    protoType: 'lobby.S2CMatchRes',
+    protoType: 'protocol.S2CQuitRoomNoti',
+  },
+  [PacketType.TEAM_CHANGE_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2STeamChangeReq',
+  },
+  [PacketType.TEAM_CHANGE_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CTeamChangeNoti',
+  },
+  [PacketType.SYNC_ROOM_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSyncRoomNoti',
+  },
+  [PacketType.GAME_START_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SGameStartReq',
+  },
+  [PacketType.GAME_START_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CGameStartRes',
+  },
+  [PacketType.LOAD_PROGRESS_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CLoadProgressNoti',
+  },
+  [PacketType.SYNC_LOAD_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSyncLoadNoti',
+  },
+  [PacketType.INITIAL_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CInitialNoti',
+  },
+  [PacketType.SYNC_PLAYERS_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSyncPlayersNoti',
+  },
+  [PacketType.SYNC_FURNACE_STATE_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSyncFurnaceStateNoti',
+  },
+  [PacketType.SAWMILL_STATUS_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSawmillStatusNoti',
+  },
+  [PacketType.WORKBENCH_STATUS_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CWorkbenchStatusNoti',
+  },
+  [PacketType.PLAYER_ACTION_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SPlayerActionReq',
+  },
+  [PacketType.PLAYER_ACTION_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CPlayerActionRes',
+  },
+  [PacketType.SPAWN_OBJECT_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSpawnObjectNoti',
+  },
+  [PacketType.DESTROY_OBJECT_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SDestroyObjectReq',
+  },
+  [PacketType.DESTROY_OBJECT_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CDestroyObjectNoti',
+  },
+  [PacketType.SYNC_FIELD_UNIT_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSyncFieldUnitNoti',
+  },
+  [PacketType.SURRENDER_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SSurrenderReq',
+  },
+  [PacketType.SURRENDER_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSurrenderRes',
+  },
+  [PacketType.SURRENDER_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSurrenderNoti',
+  },
+  [PacketType.GAME_OVER_NOTIFICATION]: {
+    handler: undefined,
+    protoType: 'protocol.S2CGameOverNoti',
+  },
+  [PacketType.MOVE_TO_AREA_MAP_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SMoveToAreaMapReq',
+  },
+  [PacketType.MOVE_TO_AREA_MAP_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CMoveToAreaMapRes',
+  },
+  [PacketType.WORKBENCH_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SWorkbenchReq',
+  },
+  [PacketType.WORKBENCH_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CWorkbenchRes',
+  },
+  [PacketType.FURNACE_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SFurnaceReq',
+  },
+  [PacketType.FURNACE_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CFurnaceRes',
+  },
+  [PacketType.SAWMILL_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SSawmillReq',
+  },
+  [PacketType.SAWMILL_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CSawmillRes',
+  },
+  [PacketType.PING_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SPingReq',
+  },
+  [PacketType.PONG_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CPongRes',
   },
   [PacketType.MISSING_FIELD]: {
     handler: undefined,
-    protoType: 'common.S2CMissingFieldNoti',
+    protoType: 'protocol.S2CMissingFieldNoti',
   },
 };
 
