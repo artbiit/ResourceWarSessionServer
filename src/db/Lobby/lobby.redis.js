@@ -1,11 +1,11 @@
 import { getRedis } from '../redis.js';
 
-const GAMESESSION_KEY = 'GameSession';
+const GAME_SESSION_KEY = 'GameSession';
 const ALIVE_GAMESSESIONS_KEY = 'GameSessions';
 const LOBBY_QUEUE_KEY = 'Lobby';
 export const trySetGameSession = async (gameCode, gameInfo) => {
   const redis = await getRedis();
-  const redisKey = `${GAMESESSION_KEY}:${gameCode}`;
+  const redisKey = `${GAME_SESSION_KEY}:${gameCode}`;
   let result = true;
   const exists = await redis.exists(redisKey);
   if (!exists) {
@@ -35,7 +35,7 @@ export const registNewLobby = async (gameCode, isPrivate) => {
  */
 export const getGameSession = async (gameCode) => {
   const redis = await getRedis();
-  const redisKey = `${GAMESESSION_KEY}:${gameCode}`;
+  const redisKey = `${GAME_SESSION_KEY}:${gameCode}`;
 
   const sessionData = await redis.hgetall(redisKey);
 
@@ -43,5 +43,28 @@ export const getGameSession = async (gameCode) => {
     return null;
   }
 
+  sessionData.previousPlayer = parseInt(sessionData.previousPlayer, 10) || 0;
+  sessionData.currentPlayer = parseInt(sessionData.currentPlayer, 10) || 0;
+  sessionData.maxPlayer = parseInt(sessionData.maxPlayer, 10) || 4;
+
   return sessionData;
+};
+
+export const increasePreviousPlayer = async (gameCode) => {
+  const redis = await getRedis();
+  const redisKey = `${GAME_SESSION_KEY}:${gameCode}`;
+
+  const exists = await redis.exists(redisKey);
+  if (!exists) {
+    throw new Error(`Game session with code ${gameCode} does not exist.`);
+  }
+
+  // Get the current value of 'previousPlayer' and increment it
+  const previousPlayer = await redis.hget(redisKey, 'previousPlayer');
+  const updatedPlayerCount = (parseInt(previousPlayer, 10) || 0) + 1;
+
+  // Save the updated value back to Redis
+  await redis.hset(redisKey, 'previousPlayer', updatedPlayerCount);
+
+  return updatedPlayerCount;
 };

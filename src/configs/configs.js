@@ -10,7 +10,10 @@ import {
 import accountConstants from './constants/accountConstant.js';
 import lobbyConstant from './constants/lobbyConstant.js';
 import gameSession from './constants/gameSession.js';
+import matchConstants from './constants/matchConstants.js';
+
 const configs = {
+  ...matchConstants,
   ...gameSession,
   ...lobbyConstant,
   ...accountConstants,

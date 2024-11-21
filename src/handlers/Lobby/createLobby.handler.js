@@ -20,7 +20,8 @@ export const createLobbyHandler = async ({ payload }) => {
       state: GameSessionState.CREATING,
       gameUrl: '',
       maxPlayer: 4,
-      currentPlayer: 0,
+      currentPlayer: 0, //세션에 연결된 수
+      previousPlayer: 1, //연결 시도 중인 유저 수
       createAt: now,
       updateAt: now,
     };
