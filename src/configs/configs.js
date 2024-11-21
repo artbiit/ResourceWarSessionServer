@@ -7,16 +7,10 @@ import {
   PACKET_TOKEN_LENGTH,
   PacketType,
 } from './constants/header.js';
-import {
-  SignInResultCode,
-  SignUpResultCode,
-  RefreshTokenResultCode,
-} from './constants/accountConstant.js';
+import accountConstants from './constants/accountConstant.js';
 
 const configs = {
-  RefreshTokenResultCode,
-  SignInResultCode,
-  SignUpResultCode,
+  ...accountConstants,
   ...CONSTANTS,
   ...REDIS_CONFIGS,
   PACKET_TYPE_LENGTH,
