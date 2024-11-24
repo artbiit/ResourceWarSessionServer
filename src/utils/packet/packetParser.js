@@ -10,7 +10,13 @@ export const packetParser = (packetType, payloadBuffer) => {
   // 핸들러 ID에 따라 적절한 payload 구조를 디코딩
   const packet = protoMessages[protoType];
 
-  let payload = packet.decode(payloadBuffer);
+  let payload = packet.toObject(packet.decode(payloadBuffer), {
+    defaults: true, // 기본값 포함
+    enums: Number, // 열거형 값을 문자열로 변환
+    longs: Number, // Long 값을 문자열로 변환
+    arrays: true, // 빈 배열 기본값 포함
+    objects: true, // 빈 객체 기본값 포함
+  });
 
   const typeName = getProtoTypeNameByHandlerId(packetType);
   const PayloadType = protoMessages[typeName];
