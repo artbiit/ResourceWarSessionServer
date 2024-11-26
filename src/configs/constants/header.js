@@ -107,6 +107,10 @@ export const PacketType = {
   MATCH_REQUEST: 54,
   MATCH_RESPONSE: 55,
 
+  //게임 서버 접속 후 인증을 위한 메세지
+  AUTHORIZE_REQUEST: 62,
+  AUTHORIZE_RESPONSE: 63,
+
   //에러
   MISSING_FIELD: 10000, //요청 파라미터 재점토바람
 };
