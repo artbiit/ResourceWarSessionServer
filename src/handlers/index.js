@@ -247,6 +247,18 @@ const handlers = {
     handler: undefined,
     protoType: 'protocol.S2CMissingFieldNoti',
   },
+  [PacketType.NEED_AUTHORIZE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CNeedAuthorizeNoti',
+  },
+  [PacketType.AUTHORIZE_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SAuthorizeReq',
+  },
+  [PacketType.AUTHORIZE_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CAuthorizeRes',
+  },
 };
 
 export const getHandlerById = (handlerId) => {
