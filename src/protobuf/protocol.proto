@@ -128,6 +128,14 @@ message Position {
     float z = 3;
 }
 
+message C2SAuthorizeReq{
+    
+}
+
+message S2CAuthorizeRes{
+    uint32 AuthorizeResultCode = 1; //
+}
+
 // 초기 정보 동기화
 message S2CInitialNoti {
     repeated PlayerInitialData playerInitialData = 1; // 플레이어 초기 정보
