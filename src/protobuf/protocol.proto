@@ -372,3 +372,8 @@ message S2CMissingFieldNoti{
     int32 packetType = 1;
     int32 missingFieldLength = 2;
 }
+
+//게임 서버에서 인증없이 다른 패킷을 보냈을 때 반환되는 메세지
+message S2CNeedAuthorizeNoti{
+
+}

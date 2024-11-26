@@ -113,6 +113,7 @@ export const PacketType = {
 
   //에러
   MISSING_FIELD: 10000, //요청 파라미터 재점토바람
+  NEED_AUTHORIZE: 10001, //게임 서버에서 인증없이 다른 패킷 보냄
 };
 
 export const ReversePacketType = Object.fromEntries(
