@@ -171,6 +171,10 @@ const handlers = {
     handler: undefined,
     protoType: 'protocol.S2CPlayerActionRes',
   },
+  [PacketType.PLAYER_MOVE]: {
+    handler: undefined,
+    protoType: 'protocol.C2SPlayerMove',
+  },
   [PacketType.SPAWN_OBJECT_NOTIFICATION]: {
     handler: undefined,
     protoType: 'protocol.S2CSpawnObjectNoti',

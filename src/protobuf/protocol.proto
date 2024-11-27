@@ -146,6 +146,10 @@ message S2CSyncPlayersNoti {
     repeated PlayerState playerStates = 1;
 }
 
+message C2SPlayerMove {
+    Position position = 1;
+}
+
 // 용광로 상태 동기화
 message S2CSyncFurnaceStateNoti {
     uint32 teamIndex = 1;
