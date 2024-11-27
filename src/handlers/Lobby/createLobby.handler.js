@@ -11,7 +11,7 @@ export const createLobbyHandler = async ({ payload }) => {
 
   let resultPayload = {
     gameCode: '',
-    gameUrl: '아직 완성된 기능이 아닙니다.',
+    gameUrl: 'yonghyeon.store:5556',
   };
   try {
     const now = Date.now();
@@ -29,7 +29,8 @@ export const createLobbyHandler = async ({ payload }) => {
       const currentGameCode = nanoid();
       if (await trySetGameSession(currentGameCode, gameInfo)) {
         await registNewLobby(currentGameCode);
-        resultPayload.gameCode = currentGameCode;
+        // resultPayload.gameCode = currentGameCode;
+        resultPayload.gameCode = 'testGameCode1';
         break;
       }
     }
