@@ -67,7 +67,7 @@ export const PacketType = {
   PLAYER_ACTION_REQUEST: 34,
   PLAYER_ACTION_RESPONSE: 35,
   PLAYER_MOVE: 61,
-  
+
   // 객체 관련
   SPAWN_OBJECT_NOTIFICATION: 36,
   DESTROY_OBJECT_REQUEST: 37,
@@ -103,10 +103,6 @@ export const PacketType = {
   // 헬스체크
   PING_REQUEST: 52,
   PONG_RESPONSE: 53,
-
-  // 대기실 매칭요청
-  MATCH_REQUEST: 54,
-  MATCH_RESPONSE: 55,
 
   //게임 서버 접속 후 인증을 위한 메세지
   AUTHORIZE_REQUEST: 62,
