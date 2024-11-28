@@ -51,8 +51,7 @@ export const refreshTokenHandler = async ({ socket, payload }) => {
 
     resultPayload.token = newToken;
     resultPayload.expirationTime = newExpirationTime;
-    await cacheUserSession(userByDB.id, newToken, newExpirationTime);
-    addUserSession(socket, userByDB.id, userName, newToken, newExpirationTime);
+    addUserSession(socket, userByDB.id, userName, newToken, newExpirationTime, userByDB.nickname);
   } catch (error) {
     resultPayload.expirationTime = 0;
     resultPayload.token = '';

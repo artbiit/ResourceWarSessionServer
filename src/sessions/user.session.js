@@ -2,7 +2,7 @@ import { cacheUserSession } from '../db/Account/account.redis.js';
 import { removeUserQueue } from '../utils/socket/messageQueue.js';
 import { userSessions } from './sessions.js';
 
-export const addUserSession = async (socket, dbId, userName, token, expirationTime) => {
+export const addUserSession = async (socket, dbId, userName, token, expirationTime, nickname) => {
   const sessionData = {
     socket,
     id: dbId,
@@ -14,7 +14,7 @@ export const addUserSession = async (socket, dbId, userName, token, expirationTi
   //토큰은 문자열, dbId는 고유한 번호기에 가능하다 봅니다.
   userSessions[token] = sessionData;
   userSessions[dbId] = sessionData;
-  return await cacheUserSession(dbId, token, expirationTime);
+  return await cacheUserSession(dbId, token, expirationTime, nickname);
 };
 
 export const removeUserSession = (token) => {

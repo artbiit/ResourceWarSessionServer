@@ -3,7 +3,7 @@ const testEnv = {
   password: 'xptmxmQlalfqjsgh1!',
   nickname: '테스트용_계정5',
   url: 'localhost',
-  port: 5555,
+  port: 25565,
 };
 
 export default testEnv;

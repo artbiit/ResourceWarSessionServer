@@ -40,7 +40,14 @@ export const loginRequestHandler = async ({ socket, payload }) => {
         const { token: newToken, expirationTime: newExpirationTime } = createNewToken();
         token = newToken;
         expirationTime = newExpirationTime;
-        addUserSession(socket, userByDB.id, userName, newToken, newExpirationTime);
+        addUserSession(
+          socket,
+          userByDB.id,
+          userName,
+          newToken,
+          newExpirationTime,
+          userByDB.nickname,
+        );
       } else {
         signInResultCode = SignInResultCode.INVALID_PW;
       }
