@@ -241,11 +241,11 @@ const handlers = {
   },
   [PacketType.PING_REQUEST]: {
     handler: undefined,
-    protoType: 'protocol.C2SPingReq',
+    protoType: 'protocol.S2CPingReq',
   },
   [PacketType.PONG_RESPONSE]: {
     handler: undefined,
-    protoType: 'protocol.S2CPongRes',
+    protoType: 'protocol.C2SPongRes',
   },
   [PacketType.MISSING_FIELD]: {
     handler: undefined,
