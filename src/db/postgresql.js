@@ -1,54 +1,45 @@
-import fs from "fs";
-import configs from "../configs/configs.js";
-import mysql from "mysql2";
-import logger from "../utils/logger.js";
-import path from "path";
-import { fileURLToPath } from "url";
-
+import fs from 'fs';
+import configs from '../configs/configs.js';
+import logger from '../utils/logger.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import pkg from 'pg';
+const { Pool } = pkg;
 // 현재 파일의 절대 경로 추출
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_CONNECTION_LIMIT } =
-  configs;
+const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_CONNECTION_LIMIT } = configs;
 
-class MysqlService {
+class PostgresService {
   dmlQueue = [];
   queryQueue = [];
   processingDml = false;
   processingQuery = false;
 
-  constructor() {}
-
-  async init() {
-    this.createConnectionPool();
-    await this.createTables();
-    logger.info("mysql initialized");
-  }
-
-  createConnectionPool() {
-    this.internalPool = mysql.createPool({
+  constructor() {
+    this.pool = new Pool({
       host: DB_HOST,
       port: DB_PORT,
       user: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
-      connectionLimit: DB_CONNECTION_LIMIT,
-      enableKeepAlive: true,
-      queueLimit: 0,
-      waitForConnections: true,
+      max: DB_CONNECTION_LIMIT, // 최대 커넥션 수
+      idleTimeoutMillis: 30000, // 사용되지 않는 연결을 닫는 시간 설정
+      connectionTimeoutMillis: 2000, // 연결 타임아웃 설정
     });
-    this.pool = this.internalPool.promise();
+  }
+
+  async init() {
+    await this.createTables();
+    logger.info('PostgreSQL initialized');
   }
 
   async createTables() {
-    const text = fs.readFileSync(
-      path.join(__dirname, `sql/schema.sql`),
-      "utf-8"
-    );
+    const text = fs.readFileSync(path.join(__dirname, `sql/schema.sql`), 'utf-8');
 
     const jobs = [];
-    text.split(";").forEach((qry) => {
+    text.split(';').forEach((qry) => {
       if (!qry.trim()) {
         return;
       }
@@ -74,10 +65,11 @@ class MysqlService {
       if (queue === this.queryQueue) this.processingQuery = true;
 
       try {
-        const result = await this.pool.execute(current.query, current.params);
+        const result = await this.pool.query(current.query, current.params);
+        
         current.resolve(result);
       } catch (error) {
-        logger.error(`MysqlService.processQueue error: ${error}`);
+        logger.error(`PostgresService.processQueue error: ${error}`);
         current.reject(error);
       } finally {
         if (queue === this.dmlQueue) this.processingDml = false;
@@ -97,28 +89,23 @@ class MysqlService {
   }
 
   async transaction(querySet) {
-    let conn;
+    const client = await this.pool.connect();
     try {
-      conn = await this.pool.getConnection();
-      await conn.beginTransaction();
+      await client.query('BEGIN');
       for (let set of querySet) {
-        await conn.execute(set.qry, set.params);
+        await client.query(set.qry, set.params);
       }
-      await conn.commit();
+      await client.query('COMMIT');
     } catch (error) {
-      logger.error(`MysqlService.transaction error: ${error}`);
-      if (conn) {
-        await conn.rollback();
-      }
+      logger.error(`PostgresService.transaction error: ${error}`);
+      await client.query('ROLLBACK');
       throw error;
     } finally {
-      if (conn) {
-        conn.release();
-      }
+      client.release();
     }
   }
 }
 
-const mysqlService = new MysqlService();
+const postgresService = new PostgresService();
 
-export { mysqlService as mysql };
+export { postgresService as postgres };

@@ -10,6 +10,7 @@ const requiredEnv = {
   DB: ['HOST', 'PORT', 'USER', 'PASSWORD', 'NAME', 'CONNECTION_LIMIT'],
   SERVER: ['PORT', 'BIND'],
   REDIS: ['HOST', 'PORT', 'PASSWORD'],
+  SECURE: ['PEPPER','SALT'],
   LOGGER: ['STACK_TRACE'],
 };
 
@@ -31,7 +32,12 @@ Object.keys(requiredEnv).forEach((key) => {
     if (!config[key]) {
       config[key] = {};
     }
-    config[key][envVar] = process.env[fullEnvVar];
+
+    if (!isNaN(process.env[fullEnvVar])) {
+      config[key][envVar] = Number(process.env[fullEnvVar]);
+    } else {
+      config[key][envVar] = process.env[fullEnvVar];
+    }
   });
 });
 

@@ -1,58 +1,41 @@
 import configs from '../configs/configs.js';
-import { getHandlerById } from '../handlers/index.js';
-import { getUserBySocket } from '../session/user.session.js';
-import { handleError } from '../utils/error/errorHandler.js';
-import { packetParser } from '../utils/parser/packetParser.js';
-import { createResponse } from '../utils/response/createResponse.js';
+import logger from '../utils/logger.js';
+import { packetParser } from '../utils/packet/packetParser.js';
+import { enqueueReceive } from '../utils/socket/messageQueue.js';
 
-const {
-  PACKET_TYPE_LENGTH,
-  PACKET_TOTAL_LENGTH,
-  PACKET_VERSION_LENGTH,
-  PACKET_SEQUENCE_LENGTH,
-  PACKET_PAYLOAD_LENGTH,
-} = configs;
+const { PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH, PACKET_TOTAL_LENGTH, PACKET_PAYLOAD_LENGTH } =
+  configs;
 
 export const onData = (socket) => async (data) => {
-  socket.buffer = Buffer.concat([socket.buffer, data]);
+  try {
+    socket.buffer = Buffer.concat([socket.buffer, data]);
 
-  while (socket.buffer.length >= PACKET_TOTAL_LENGTH) {
-    const packetType = socket.buffer.readUintBE(0, PACKET_TYPE_LENGTH);
-    const versionLength = socket.buffer.readUintBE(PACKET_TYPE_LENGTH, PACKET_VERSION_LENGTH);
-    let offset = PACKET_TYPE_LENGTH + PACKET_VERSION_LENGTH;
-    const version = socket.buffer.subarray(offset, offset + versionLength).toString();
-    offset += versionLength;
-    const sequence = socket.buffer.readUintBE(offset, PACKET_SEQUENCE_LENGTH);
-    offset += PACKET_SEQUENCE_LENGTH;
-    const payloadLength = socket.buffer.readUintBE(offset, PACKET_PAYLOAD_LENGTH);
-    offset += PACKET_PAYLOAD_LENGTH;
+    while (socket.buffer.length >= PACKET_TOTAL_LENGTH) {
+      const packetType = socket.buffer.readUintBE(0, PACKET_TYPE_LENGTH);
+      const tokenLength = socket.buffer.readUintBE(PACKET_TYPE_LENGTH, PACKET_TOKEN_LENGTH);
+      let offset = PACKET_TYPE_LENGTH + PACKET_TOKEN_LENGTH;
+      const token = socket.buffer.subarray(offset, offset + tokenLength).toString();
+      offset += tokenLength;
+      const payloadLength = socket.buffer.readUintBE(offset, PACKET_PAYLOAD_LENGTH);
+      offset += PACKET_PAYLOAD_LENGTH;
+      const requiredLength = offset + payloadLength;
 
-    const requiredLength = offset + payloadLength;
-
-    if (socket.buffer.length >= requiredLength) {
-      const payloadData = socket.buffer.subarray(offset, requiredLength);
-      socket.buffer = socket.buffer.subarray(requiredLength);
-
-      let result = null;
-      try {
-        const payload = packetParser(socket, packetType, version, sequence, payloadData);
-        const handler = getHandlerById(packetType);
-        result = await handler({ socket, payload });
-      } catch (error) {
-        console.error(error);
-        result = handleError(packetType, error);
-      } finally {
-        if (result) {
-          const response = createResponse(
-            result.responseType,
-            getUserBySocket(socket),
-            result.payload,
-          );
-          socket.write(response);
-        }
+      if (socket.buffer.length >= requiredLength) {
+        const payloadData = socket.buffer.subarray(offset, requiredLength);
+        socket.buffer = socket.buffer.subarray(requiredLength);
+        const payload = packetParser(packetType, payloadData);
+        payload.token = token;
+        enqueueReceive(socket.id, packetType, payload);
+      } else {
+        break;
       }
-    } else {
-      break;
     }
+  } catch (error) {
+    socket.buffer = Buffer.alloc(0);
+    socket.errorCount++;
+    if (socket.errorCount >= 3) {
+      socket.destroy();
+    }
+    logger.error(error);
   }
 };

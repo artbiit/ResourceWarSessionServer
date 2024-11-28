@@ -6,13 +6,9 @@ const { PacketType } = configs;
 
 const client = getOrCreateClient(testEnv.url, testEnv.port);
 await client.connect();
-
-client.addHandler(PacketType.SIGN_UP_RESPONSE, async (payload) => {
+client.addHandler(PacketType.CREATE_ROOM_RESPONSE, async (payload) => {
   // console.log(payload);
 });
-
-client.sendMessage(PacketType.SIGN_UP_REQUEST, {
-  id: testEnv.userName,
-  password: testEnv.password,
-  nickname: testEnv.nickname,
+client.sendMessage(PacketType.CREATE_ROOM_REQUEST, {
+  isPrivate: false,
 });

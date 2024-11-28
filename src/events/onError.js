@@ -1,7 +1,7 @@
-import { removeUser } from '../session/user.session.js';
+import logger from '../utils/logger.js';
+import { removeUserQueue } from '../utils/socket/messageQueue.js';
 
 export const onError = (socket) => (err) => {
-  console.error('소켓 오류:', err);
-  // 세션에서 유저 삭제
-  removeUser(socket);
+  removeUserQueue(socket);
+  logger.error(`소켓 오류: ${socket?.id}\n`, err);
 };
