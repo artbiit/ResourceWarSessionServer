@@ -29,7 +29,7 @@ export const loginRequestHandler = async ({ socket, payload }) => {
   let signInResultCode = SignInResultCode.SUCCESS;
   let token = '';
   let expirationTime = 0;
-
+  let nickname = '';
   try {
     const userByDB = await findUserByUserName(userName);
     if (userByDB) {
@@ -40,6 +40,7 @@ export const loginRequestHandler = async ({ socket, payload }) => {
         const { token: newToken, expirationTime: newExpirationTime } = createNewToken();
         token = newToken;
         expirationTime = newExpirationTime;
+        nickname = userByDB.nickname;
         addUserSession(
           socket,
           userByDB.id,
@@ -58,5 +59,8 @@ export const loginRequestHandler = async ({ socket, payload }) => {
     logger.error(`loginRequestHandler. ${error.message}`);
     signInResultCode = SignInResultCode.UNKNOWN_ERROR;
   }
-  return new Result({ signInResultCode, token, expirationTime }, PacketType.SIGN_IN_RESPONSE);
+  return new Result(
+    { signInResultCode, token, expirationTime, nickname },
+    PacketType.SIGN_IN_RESPONSE,
+  );
 };

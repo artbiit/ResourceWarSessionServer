@@ -45,6 +45,7 @@ message S2CSignInRes {
     uint32 signInResultCode = 1; // 0이면 성공
     string token = 2;
     uint64 expirationTime = 3;  // 만료시간
+    string nickname = 4; //유저 닉네임
 }
 
 message C2SRefreshTokenReq {
