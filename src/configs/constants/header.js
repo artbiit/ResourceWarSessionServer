@@ -104,12 +104,13 @@ export const PacketType = {
   PING_REQUEST: 52,
   PONG_RESPONSE: 53,
 
-  // 대기실 매칭요청
-  MATCH_REQUEST: 54,
-  MATCH_RESPONSE: 55,
+  //게임 서버 접속 후 인증을 위한 메세지
+  AUTHORIZE_REQUEST: 62,
+  AUTHORIZE_RESPONSE: 63,
 
   //에러
   MISSING_FIELD: 10000, //요청 파라미터 재점토바람
+  NEED_AUTHORIZE: 10001, //게임 서버에서 인증없이 다른 패킷 보냄
 };
 
 export const ReversePacketType = Object.fromEntries(

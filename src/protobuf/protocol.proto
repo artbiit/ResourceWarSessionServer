@@ -128,6 +128,14 @@ message Position {
     float z = 3;
 }
 
+message C2SAuthorizeReq{
+    
+}
+
+message S2CAuthorizeRes{
+    uint32 AuthorizeResultCode = 1; //
+}
+
 // 초기 정보 동기화
 message S2CInitialNoti {
     repeated PlayerInitialData playerInitialData = 1; // 플레이어 초기 정보
@@ -141,6 +149,7 @@ message S2CSyncPlayersNoti {
 message C2SPlayerMove {
     Position position = 1;
 }
+
 // 용광로 상태 동기화
 message S2CSyncFurnaceStateNoti {
     uint32 teamIndex = 1;
@@ -366,4 +375,9 @@ message S2CSyncLoadNoti {
 message S2CMissingFieldNoti{
     int32 packetType = 1;
     int32 missingFieldLength = 2;
+}
+
+//게임 서버에서 인증없이 다른 패킷을 보냈을 때 반환되는 메세지
+message S2CNeedAuthorizeNoti{
+
 }
