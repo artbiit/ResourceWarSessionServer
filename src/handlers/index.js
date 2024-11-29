@@ -241,15 +241,31 @@ const handlers = {
   },
   [PacketType.PING_REQUEST]: {
     handler: undefined,
-    protoType: 'protocol.C2SPingReq',
+    protoType: 'protocol.S2CPingReq',
   },
   [PacketType.PONG_RESPONSE]: {
     handler: undefined,
-    protoType: 'protocol.S2CPongRes',
+    protoType: 'protocol.C2SPongRes',
   },
   [PacketType.MISSING_FIELD]: {
     handler: undefined,
     protoType: 'protocol.S2CMissingFieldNoti',
+  },
+  [PacketType.NEED_AUTHORIZE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CNeedAuthorizeNoti',
+  },
+  [PacketType.AUTHORIZE_REQUEST]: {
+    handler: undefined,
+    protoType: 'protocol.C2SAuthorizeReq',
+  },
+  [PacketType.AUTHORIZE_RESPONSE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CAuthorizeRes',
+  },
+  [PacketType.NEED_AUTHORIZE]: {
+    handler: undefined,
+    protoType: 'protocol.S2CNeedAuthorizeNoti',
   },
 };
 

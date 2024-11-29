@@ -6,8 +6,7 @@ const { PacketType } = configs;
 
 const client = getOrCreateClient(testEnv.url, testEnv.port);
 await client.connect();
-
-//client.token = "7b5e6aa1-87f2-4174-8996-f827012d2e8a";
+client.token = "7b5e6aa1-87f2-4174-8996-f827012d2e8a";
 client.addHandler(PacketType.JOIN_ROOM_RESPONSE, async (payload) => {
   // console.log(payload);
 });
