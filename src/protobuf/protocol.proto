@@ -71,15 +71,6 @@ message S2CSignOutRes{
 //Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//
 //Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//
 //Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//Game//
-// GameState 메시지
-message GameState {
-    uint32 gold = 1;
-    uint32 baseHp = 2;
-    uint32 monsterLevel = 5;
-    uint32 score = 6;
-    repeated Position monsterPath = 7;
-    Position basePosition = 8;
-  }
 
   // 아이템 데이터
 message ItemData {
@@ -116,11 +107,12 @@ message PlayerState {
   
 message FieldUnit {
     uint32 id = 1;
-    uint32 state = 2; // 상태아이디로 이동인지, 근거리공격인지, 원거리공격인지 등등
-    Position position = 3;
-    uint32 hp = 4;
-    uint32 damage = 5;
-    uint32 targetId = 6;
+    int32 unitType = 2;
+    uint32 state = 3; // 상태아이디로 이동인지, 근거리공격인지, 원거리공격인지 등등
+    Position position = 4;
+    uint32 hp = 5;
+    uint32 damage = 6;
+    uint32 targetId = 7;
 }
   
 message Position {
@@ -128,6 +120,8 @@ message Position {
     float y = 2;
     float z = 3;
 }
+
+// 여기서부터 실제 패킷들
 
 message C2SAuthorizeReq{
     
@@ -341,15 +335,26 @@ message S2CSyncRoomNoti {
   repeated PlayerRoomInfo players = 1;
 }
 
-// 게임 시작 요청 (준비 완료)
-message C2SGameStartReq {
+// 플레이어 준비 완료
+message C2SPlayerIsReadyChangeReq {
     bool ready = 1;
 }
 
-// 게임 시작 결과 (준비 완료)
-message S2CGameStartRes {
-  uint32 gameStartResultCode = 1; // 0이면 성공
+// 플레이어 준비 완료
+message S2CPlayerIsReadyChangeRes {
+    uint32 playerIsReadyChangeResultCode = 1;
 }
+
+// 게임 시작 요청 (준비 완료)
+message C2SGameStartReq {
+    
+}
+
+// 게임 시작 결과 (준비 완료)
+message S2CGameStartNoti {
+    // 게임 시작 할 수 있다면 보내주고
+    // 게임 시작 못 하면 걍 안보내줌
+}  
 
 // 로딩 진행도 (해당 게임 세션에 들어와 있는 애들한테 Noti)
 message C2SLoadProgressNoti {
@@ -366,6 +371,22 @@ message S2CSyncLoadNoti {
   }
 }
 
+//TODO : 추후 삭제할 것
+//검증없이 바로 몬스터 추가할 수 있도록 해주는 메세지
+message C2SMonsterAddReq{
+    repeated int32 monsters = 1;
+}
+
+//저장된 몬스터 출격 요청
+message C2SMonsterDeployReq{
+    
+}
+
+
+//출격한 팀에게만 보내주는 몬스터 출격되었다는 알람
+message S2CMonsterDeployNoti{
+ 
+}
 
 ///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error//
 ///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error///Error//
